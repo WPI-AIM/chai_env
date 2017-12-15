@@ -89,22 +89,22 @@ class Object: public RosCom{
 public:
     Object(std::string a_name);
     inline void set_name(std::string name){m_name.data = name;}
-    void set_position(double px, double py, double pz);
-    void set_orientation(double roll, double pitch, double yaw);
+    void cur_position(double px, double py, double pz);
+    void cur_orientation(double roll, double pitch, double yaw);
 };
 
 Object::Object(std::string a_name): RosCom(a_name){
 
 }
 
-void Object::set_position(double px, double py, double pz){
+void Object::cur_position(double px, double py, double pz){
     m_trans.setOrigin(tf::Vector3(px, py, pz));
     m_poseStamped.pose.position.x = px;
     m_poseStamped.pose.position.y = py;
     m_poseStamped.pose.position.z = pz;
 }
 
-void Object::set_orientation(double roll, double pitch, double yaw){
+void Object::cur_orientation(double roll, double pitch, double yaw){
     tf::Quaternion rot_quat;
     rot_quat.setRPY(roll, pitch, yaw);
     m_trans.setRotation(rot_quat);
@@ -116,8 +116,8 @@ public:
     ChaiEnv();
     ~ChaiEnv();
     void create_object(std::string name);
-    bool set_object_position(std::string name, double px, double py, double pz);
-    bool set_object_orientation(std::string name, double roll, double pitch, double yaw);
+    bool object_cur_position(std::string name, double px, double py, double pz);
+    bool object_cur_orientation(std::string name, double roll, double pitch, double yaw);
 
 
 private:
