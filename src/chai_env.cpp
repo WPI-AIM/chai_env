@@ -6,7 +6,7 @@ ChaiEnv::ChaiEnv(){
 
 
 void ChaiEnv::create_object(std::string name){
-    m_objectMap[name] = boost::shared_ptr<Object>(new Object);
+    m_objectMap[name] = boost::shared_ptr<Object>(new Object(name));
 }
 
 bool ChaiEnv::set_object_position(std::string name, double px, double py, double pz){
@@ -29,4 +29,8 @@ bool ChaiEnv::set_object_orientation(std::string name, double roll, double pitch
     else{
         return false;
     }
+}
+
+ChaiEnv::~ChaiEnv(){
+
 }
