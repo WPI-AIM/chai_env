@@ -16,6 +16,17 @@ void ChaiEnv::add_object(std::string name){
     }
 }
 
+Object* ChaiEnv::get_object_handle(std::string name){
+    m_objectIt = m_objectMap.find(name);
+    if(m_objectIt != m_objectMap.end()){
+        return m_objectIt->second.get();
+    }
+    else{
+        std::cerr<< "ERROR!, OBJECT: \""<< name << "\" DOESN'T EXIST" << std::endl;
+        return NULL;
+    }
+}
+
 bool ChaiEnv::object_cur_position(std::string name, double px, double py, double pz){
     m_objectIt = m_objectMap.find(name);
     if(m_objectIt != m_objectMap.end()){
