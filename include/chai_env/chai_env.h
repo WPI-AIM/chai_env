@@ -115,7 +115,7 @@ class ChaiEnv{
 public:
     ChaiEnv();
     ~ChaiEnv();
-    void create_object(std::string name);
+    void add_object(std::string name);
     bool object_cur_position(std::string name, double px, double py, double pz);
     bool object_cur_orientation(std::string name, double roll, double pitch, double yaw);
 
