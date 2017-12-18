@@ -119,9 +119,17 @@ include_directories(
  ${catkin_INCLUDE_DIRS}
 )
 
+set (HDR_FILES include/${PROJECT_NAME}/chai_env.h
+               include/${PROJECT_NAME}/Object.h
+               include/${PROJECT_NAME}/RosCom.h)
+
+set (SRC_FILES src/chai_env.cpp
+               src/Object.cpp
+               src/RosCom.cpp)
+
 ## Declare a C++ library
- add_library(chai_env include/${PROJECT_NAME}/chai_env.h
-   src/chai_env.cpp
+ add_library(chai_env ${HDR_FILES}
+   ${SRC_FILES}
  )
 
 ## Add cmake target dependencies of the library
