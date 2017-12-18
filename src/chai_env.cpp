@@ -7,8 +7,7 @@ ChaiEnv::ChaiEnv(){
 
 
 void ChaiEnv::add_object(std::string name){
-    m_objectIt = m_objectMap.find(name);
-    if(m_objectIt == m_objectMap.end()){
+    if(! object_exists(name)){
         m_objectMap[name] = boost::shared_ptr<Object>(new Object(name));
     }
     else{
@@ -17,9 +16,8 @@ void ChaiEnv::add_object(std::string name){
 }
 
 Object* ChaiEnv::get_object_handle(std::string name){
-    m_objectIt = m_objectMap.find(name);
-    if(m_objectIt != m_objectMap.end()){
-        return m_objectIt->second.get();
+    if(object_exists(name)){
+        return m_objectMap[name].get();
     }
     else{
         std::cerr<< "ERROR!, OBJECT: \""<< name << "\" DOESN'T EXIST" << std::endl;
@@ -27,9 +25,18 @@ Object* ChaiEnv::get_object_handle(std::string name){
     }
 }
 
-bool ChaiEnv::object_cur_position(std::string name, double px, double py, double pz){
+bool ChaiEnv::object_exists(std::string name){
     m_objectIt = m_objectMap.find(name);
     if(m_objectIt != m_objectMap.end()){
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+
+bool ChaiEnv::object_cur_position(std::string name, double px, double py, double pz){
+    if(object_exists(name)){
         m_objectMap[name]->cur_position(px, py, pz);
         return true;
     }
@@ -40,8 +47,7 @@ bool ChaiEnv::object_cur_position(std::string name, double px, double py, double
 }
 
 bool ChaiEnv::object_cur_orientation(std::string name, double roll, double pitch, double yaw){
-    m_objectIt = m_objectMap.find(name);
-    if(m_objectIt != m_objectMap.end()){
+    if(object_exists(name)){
         m_objectMap[name]->cur_orientation(roll, pitch, yaw);
         return true;
     }

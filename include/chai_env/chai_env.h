@@ -23,6 +23,8 @@ public:
     bool object_cur_orientation(std::string name, double roll, double pitch, double yaw);
 
 private:
+
+    bool object_exists(std::string name);
     static const int max_obj_size=10;
     int m_numObjects;
     std::map<std::string, boost::shared_ptr<Object> > m_objectMap;
