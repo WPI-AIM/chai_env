@@ -1,4 +1,5 @@
 #include "chai_env/chai_env.h"
+#include <string>
 
 ChaiEnv::ChaiEnv(){
     m_numObjects = 0;
@@ -6,7 +7,13 @@ ChaiEnv::ChaiEnv(){
 
 
 void ChaiEnv::create_object(std::string name){
-    m_objectMap[name] = boost::shared_ptr<Object>(new Object(name));
+    m_objectIt = m_objectMap.find(name);
+    if(m_objectIt == m_objectMap.end()){
+        m_objectMap[name] = boost::shared_ptr<Object>(new Object(name));
+    }
+    else{
+        std::cerr<< "ERROR!, OBJECT: \""<< name << "\" ALREADY EXISTS. IGNORING" << std::endl;
+    }
 }
 
 bool ChaiEnv::object_cur_position(std::string name, double px, double py, double pz){
