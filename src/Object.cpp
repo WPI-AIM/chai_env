@@ -17,3 +17,16 @@ void Object::cur_orientation(double roll, double pitch, double yaw){
     m_trans.setRotation(rot_quat);
     tf::quaternionTFToMsg(rot_quat, m_poseStamped.pose.orientation);
 }
+
+
+extern "C"{
+
+Object* create_object(std::string name){
+    return new Object(name);
+}
+
+void destroy_object(Object* obj){
+    delete obj;
+}
+
+}
