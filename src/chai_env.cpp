@@ -7,7 +7,7 @@ ChaiEnv::ChaiEnv(){
 
 
 void ChaiEnv::add_object(std::string name){
-    if(! object_exists(name)){
+    if(!object_exists(name)){
         m_objectMap[name] = boost::shared_ptr<Object>(new Object(name));
     }
     else{
@@ -49,6 +49,28 @@ bool ChaiEnv::object_cur_position(std::string name, double px, double py, double
 bool ChaiEnv::object_cur_orientation(std::string name, double roll, double pitch, double yaw){
     if(object_exists(name)){
         m_objectMap[name]->cur_orientation(roll, pitch, yaw);
+        return true;
+    }
+    else{
+        std::cerr<< "ERROR!, OBJECT: \""<< name << "\" DOESN'T EXIST" << std::endl;
+        return false;
+    }
+}
+
+bool ChaiEnv::object_cur_force(std::string name, double fx, double fy, double fz){
+    if(object_exists(name)){
+        m_objectMap[name]->cur_force(fx, fy, fz);
+        return true;
+    }
+    else{
+        std::cerr<< "ERROR!, OBJECT: \""<< name << "\" DOESN'T EXIST" << std::endl;
+        return false;
+    }
+}
+
+bool ChaiEnv::object_cur_torque(std::string name, double nx, double ny, double nz){
+    if(object_exists(name)){
+        m_objectMap[name]->cur_torque(nx, ny, nz);
         return true;
     }
     else{

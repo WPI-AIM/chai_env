@@ -21,6 +21,8 @@ public:
     Object* get_object_handle(std::string name);
     bool object_cur_position(std::string name, double px, double py, double pz);
     bool object_cur_orientation(std::string name, double roll, double pitch, double yaw);
+    bool object_cur_force(std::string name, double fx, double fy, double fz);
+    bool object_cur_torque(std::string name, double nx, double ny, double nz);
 
 private:
 
