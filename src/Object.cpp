@@ -18,6 +18,12 @@ void Object::cur_orientation(double roll, double pitch, double yaw){
     tf::quaternionTFToMsg(rot_quat, m_poseStamped.pose.orientation);
 }
 
+void Object::cur_orientation(double qx, double qy, double qz, double qw){
+    tf::Quaternion rot_quat(qx, qy, qz, qw);
+    m_trans.setRotation(rot_quat);
+    tf::quaternionTFToMsg(rot_quat, m_poseStamped.pose.orientation);
+}
+
 void Object::cur_force(double fx, double fy, double fz){
     tf::Vector3 f(fx, fy, fz);
     tf::vector3TFToMsg(f, m_wrenchStamped.wrench.force);
