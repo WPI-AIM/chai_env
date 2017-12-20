@@ -9,6 +9,7 @@ RosCom::RosCom( std::string a_name, int a_freq){
     nodePtr.reset(new ros::NodeHandle);
     aspinPtr.reset(new ros::AsyncSpinner(5));
     ratePtr.reset(new ros::Rate(m_freq));
+    nodePtr->setCallbackQueue(&custom_queue);
 
 
     chai_namespace = "chai/env";
@@ -16,6 +17,8 @@ RosCom::RosCom( std::string a_name, int a_freq){
     obj_pose_pub = nodePtr->advertise<geometry_msgs::PoseStamped>("/" + chai_namespace + "/" + m_name.data + "/PoseStamped", 10);
     obj_wrench_pub = nodePtr->advertise<geometry_msgs::WrenchStamped>("/" + chai_namespace + "/" + m_name.data + "/WrenchStamped", 10);
     obj_reward_pub = nodePtr->advertise<std_msgs::Float32>("/" + chai_namespace + "/" + m_name.data + "/Reward", 10);
+
+    obj_wrench_sub = nodePtr->subscribe("/" + chai_namespace + "/" + m_name.data + "/WrenchCmd", 10, &RosCom::wrench_sub_cb, this);
 
     m_thread = boost::thread(boost::bind(&RosCom::run_publishers, this));
     std::cerr << "Thread Joined: " << m_name.data << std::endl;
@@ -26,6 +29,16 @@ RosCom::~RosCom(){
     std::cerr << "Shutting Down: " << m_name.data << std::endl;
 }
 
+void RosCom::wrench_sub_cb(geometry_msgs::WrenchStampedConstPtr msg){
+    m_wrenchStamped_Cmd = *msg;
+    m_wrenchCmd.Fx = m_wrenchStamped_Cmd.wrench.force.x;
+    m_wrenchCmd.Fy = m_wrenchStamped_Cmd.wrench.force.y;
+    m_wrenchCmd.Fz = m_wrenchStamped_Cmd.wrench.force.z;
+    m_wrenchCmd.Nx = m_wrenchStamped_Cmd.wrench.torque.x;
+    m_wrenchCmd.Ny = m_wrenchStamped_Cmd.wrench.torque.y;
+    m_wrenchCmd.Nz = m_wrenchStamped_Cmd.wrench.torque.z;
+}
+
 void RosCom::run_publishers(){
 
     while(nodePtr->ok()){
@@ -33,6 +46,7 @@ void RosCom::run_publishers(){
         obj_pose_pub.publish(m_poseStamped);
         obj_wrench_pub.publish(m_wrenchStamped);
         obj_reward_pub.publish(m_reward);
+        custom_queue.callAvailable();
         ratePtr->sleep();
     }
 }
