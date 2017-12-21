@@ -2,7 +2,7 @@
 
 RosCom::RosCom( std::string a_name, int a_freq){
     m_freq = a_freq;
-    m_name.data = a_name;
+    m_objectState.name.data = a_name;
     int argc = 0;
     char **argv = 0;
     ros::init(argc, argv, "chai_env_node");
@@ -13,20 +13,16 @@ RosCom::RosCom( std::string a_name, int a_freq){
 
 
     chai_namespace = "chai/env";
-    obj_name_pub = nodePtr->advertise<std_msgs::String>("/" + chai_namespace + "/" + m_name.data + "/Name", 10);
-    obj_pose_pub = nodePtr->advertise<geometry_msgs::PoseStamped>("/" + chai_namespace + "/" + m_name.data + "/PoseStamped", 10);
-    obj_wrench_pub = nodePtr->advertise<geometry_msgs::WrenchStamped>("/" + chai_namespace + "/" + m_name.data + "/WrenchStamped", 10);
-    obj_reward_pub = nodePtr->advertise<std_msgs::Float32>("/" + chai_namespace + "/" + m_name.data + "/Reward", 10);
-
-    obj_wrench_sub = nodePtr->subscribe("/" + chai_namespace + "/" + m_name.data + "/WrenchCmd", 10, &RosCom::wrench_sub_cb, this);
+    obj_state_pub = nodePtr->advertise<chai_msg::ObjectState>("/" + chai_namespace + "/" + a_name + "/State", 10);
+    obj_wrench_sub = nodePtr->subscribe("/" + chai_namespace + "/" + a_name + "/Command", 10, &RosCom::wrench_sub_cb, this);
 
     m_thread = boost::thread(boost::bind(&RosCom::run_publishers, this));
-    std::cerr << "Thread Joined: " << m_name.data << std::endl;
+    std::cerr << "Thread Joined: " << a_name << std::endl;
 }
 
 RosCom::~RosCom(){
     ros::shutdown();
-    std::cerr << "Shutting Down: " << m_name.data << std::endl;
+    std::cerr << "Shutting Down: " << m_objectState.name.data << std::endl;
 }
 
 void RosCom::wrench_sub_cb(geometry_msgs::WrenchStampedConstPtr msg){
@@ -42,10 +38,7 @@ void RosCom::wrench_sub_cb(geometry_msgs::WrenchStampedConstPtr msg){
 void RosCom::run_publishers(){
 
     while(nodePtr->ok()){
-        obj_name_pub.publish(m_name);
-        obj_pose_pub.publish(m_poseStamped);
-        obj_wrench_pub.publish(m_wrenchStamped);
-        obj_reward_pub.publish(m_reward);
+        obj_state_pub.publish(m_objectState);
         custom_queue.callAvailable();
         ratePtr->sleep();
     }
