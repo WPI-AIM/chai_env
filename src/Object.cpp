@@ -34,6 +34,20 @@ void Object::cur_torque(double nx, double ny, double nz){
     tf::vector3TFToMsg(n, m_objectState.wrench_cur.torque);
 }
 
+void Object::set_time_stamp(double n_sec){
+    m_objectState.header.stamp.nsec = n_sec;
+}
+
+void Object::set_mass(double a_mass){
+    m_objectState.mass = a_mass;
+}
+
+void Object::set_principal_intertia(double Ixx, double Iyy, double Izz){
+    m_objectState.pInertia.x = Ixx;
+    m_objectState.pInertia.y = Iyy;
+    m_objectState.pInertia.z = Izz;
+}
+
 
 extern "C"{
 

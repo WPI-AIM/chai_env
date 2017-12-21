@@ -13,6 +13,9 @@ public:
     void cur_orientation(double qx, double qy, double qz, double qw);
     void cur_force(double fx, double fy, double fz);
     void cur_torque(double nx, double ny, double nz);
+    void set_time_stamp(double n_sec);
+    void set_mass(double a_mass);
+    void set_principal_intertia(double Ixx, double Iyy, double Izz);
 };
 
 
