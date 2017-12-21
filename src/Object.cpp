@@ -35,7 +35,7 @@ void Object::cur_torque(double nx, double ny, double nz){
 }
 
 void Object::set_time_stamp(double n_sec){
-    m_objectState.header.stamp.nsec = n_sec;
+    m_objectState.header.stamp.fromSec(n_sec);
 }
 
 void Object::set_mass(double a_mass){
