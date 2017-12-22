@@ -124,13 +124,15 @@ set (HDR_FILES include/${PROJECT_NAME}/chai_env.h
                include/${PROJECT_NAME}/RosCom.h)
 
 set (SRC_FILES src/chai_env.cpp
-               src/Object.cpp
-               src/RosCom.cpp)
+               src/Object.cpp)
+               #src/RosCom.cpp)
 
 ## Declare a C++ library
  add_library(chai_env ${HDR_FILES}
    ${SRC_FILES}
  )
+
+ add_library(ros_com include/${PROJECT_NAME}/RosCom.h src/RosCom.cpp)
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
@@ -154,6 +156,10 @@ set (SRC_FILES src/chai_env.cpp
 
 ## Specify libraries to link a library or executable target against
  target_link_libraries(chai_env
+   ${catkin_LIBRARIES} dl
+ )
+
+ target_link_libraries(ros_com
    ${catkin_LIBRARIES}
  )
 

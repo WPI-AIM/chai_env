@@ -43,3 +43,13 @@ void RosCom::run_publishers(){
         ratePtr->sleep();
     }
 }
+
+extern "C"{
+boost::shared_ptr<RosCom> create(std::string a_name){
+    boost::shared_ptr<RosCom> rosObj(new RosCom(a_name));
+    return rosObj;
+}
+void destroy(){
+}
+
+}

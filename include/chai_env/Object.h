@@ -4,10 +4,10 @@
 #include <string>
 #include "chai_env/RosCom.h"
 
-class Object: public RosCom{
+class Object{
 public:
     Object(std::string a_name);
-    inline void set_name(std::string name){m_objectState.name.data = name;}
+//    inline void set_name(std::string name){m_objectState.name.data = name;}
     void cur_position(double px, double py, double pz);
     void cur_orientation(double roll, double pitch, double yaw);
     void cur_orientation(double qx, double qy, double qz, double qw);
@@ -16,6 +16,10 @@ public:
     void set_time_stamp(double n_sec);
     void set_mass(double a_mass);
     void set_principal_intertia(double Ixx, double Iyy, double Izz);
+
+private:
+    int init(std::string name);
+    boost::shared_ptr<RosCom> m_rosCom;
 };
 
 
