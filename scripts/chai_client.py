@@ -1,5 +1,6 @@
 import rospy
 from chai_msg.msg import ObjectState
+from threading import Lock
 
 class Object:
     def __init__(self, a_name):
@@ -17,6 +18,7 @@ class ChaiClient:
         self.m_nObjects = 0
         self.m_sub_list = []
         self.m_obj_list = []
+        self.mutex = Lock()
         pass
 
     def process_topics(self):
@@ -30,7 +32,9 @@ class ChaiClient:
         pass
 
     def obj_sub_cb(self, data, a_objInd):
+        self.mutex.acquire()
         print 'Object Data ', data.name, ' Object Index', a_objInd
+        self.mutex.release()
 
     def find_objects(self):
         for i in range(len(self.active_topics)):
