@@ -35,8 +35,8 @@ class Object:
 class ChaiClient:
     def __init__(self):
         self.m_ros_topics = []
-        self.m_search_string_prefix = '/chai/env/'
-        self.m_search_string_end = '/State'
+        self.m_search_prefix_str = '/chai/env/'
+        self.m_search_suffix_str = '/State'
         self.m_string_cmd = '/Command'
         self.m_sub_list = []
         self.m_mutex = Lock()
@@ -81,28 +81,35 @@ class ChaiClient:
         pass
 
     def print_summary(self):
-        print 'Objects are: '
+        print '_________________________________________________________'
+        print '---------------------------------------------------------'
+        print 'CLIENT FOR CREATING OBJECTS FROM ROSTOPICS'
+        print 'Searching Object names from ros topics with'
+        print 'Prefix: ', self.m_search_prefix_str
+        print 'Suffix: ', self.m_search_suffix_str
+        print 'Number of OBJECTS found', len(self.m_objects_dict)
         for key, value in self.m_objects_dict.items():
             print key
+        print '---------------------------------------------------------'
 
     def create_objs_from_rostopics(self):
         rospy.init_node('chai_client')
         self.m_ros_topics = rospy.get_published_topics()
         for i in range(len(self.m_ros_topics)):
             for j in range(len(self.m_ros_topics[i])):
-                prefix_ind = self.m_ros_topics[i][j].find(self.m_search_string_prefix)
+                prefix_ind = self.m_ros_topics[i][j].find(self.m_search_prefix_str)
                 if prefix_ind >= 0:
-                    search_ind = self.m_ros_topics[i][j].find(self.m_search_string_end)
+                    search_ind = self.m_ros_topics[i][j].find(self.m_search_suffix_str)
                     if search_ind >= 0:
                         # Searching the active topics between the end of prefix:/chai/env/ and start of /State
                         obj_name = self.m_ros_topics[i][j][
-                                     prefix_ind + len(self.m_search_string_prefix):search_ind]
+                                     prefix_ind + len(self.m_search_prefix_str):search_ind]
                         obj = Object(obj_name)
                         obj.m_sub = rospy.Subscriber(self.m_ros_topics[i][j],
                                                      ObjectState,
                                                      obj.ros_cb)
 
-                        pub_topic_str = self.m_search_string_prefix + obj.m_name + self.m_string_cmd
+                        pub_topic_str = self.m_search_prefix_str + obj.m_name + self.m_string_cmd
                         obj.m_pub = rospy.Publisher(name=pub_topic_str, data_class=WrenchStamped, queue_size=10)
                         self.m_objects_dict[obj_name] = obj
 
@@ -116,8 +123,8 @@ def main():
     while not rospy.is_shutdown():
         obj = clientObj.get_obj_handle('Torus')
         obj.command(0,0,0,0,0,0)
-        print obj.m_name
-        print obj.m_pose.position
+        # print obj.m_name
+        # print obj.m_pose.position
         rospy.sleep(0.1)
 
 
