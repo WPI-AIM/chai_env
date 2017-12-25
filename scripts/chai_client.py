@@ -3,6 +3,7 @@ from chai_msg.msg import ObjectState
 from threading import Lock
 import threading
 from geometry_msgs.msg import WrenchStamped, Pose
+from tf import transformations
 import time
 
 
@@ -27,6 +28,18 @@ class Object:
         self.m_cmd.wrench.torque.x = nx
         self.m_cmd.wrench.torque.x = ny
         self.m_cmd.wrench.torque.x = nz
+
+    def get_pose(self):
+        quat = self.m_pose.orientation
+        explicit_quat = [quat.x, quat.y, quat.z, quat.w]
+        rpy = transformations.euler_from_quaternion(explicit_quat,'szyx')
+        pose = [self.m_pose.position.x,
+                self.m_pose.position.y,
+                self.m_pose.position.z,
+                rpy[0],
+                rpy[1],
+                rpy[2]]
+        return pose
 
     def run_publisher(self):
         self.m_pub.publish(self.m_cmd)
