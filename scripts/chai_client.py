@@ -13,8 +13,9 @@ class Object:
         self.m_name = a_name
         self.m_pose = Pose()
         self.m_cmd = WrenchStamped()
-        self.m_pub = []
-        self.m_sub = []
+        self.m_pub = threading.Thread()
+        self.m_sub = threading.Thread()
+        self.m_pub_flag = True
 
     def ros_cb(self, data):
         self.m_name = data.name.data
@@ -32,7 +33,7 @@ class Object:
     def get_pose(self):
         quat = self.m_pose.orientation
         explicit_quat = [quat.x, quat.y, quat.z, quat.w]
-        rpy = transformations.euler_from_quaternion(explicit_quat,'szyx')
+        rpy = transformations.euler_from_quaternion(explicit_quat, 'szyx')
         pose = [self.m_pose.position.x,
                 self.m_pose.position.y,
                 self.m_pose.position.z,
@@ -42,7 +43,8 @@ class Object:
         return pose
 
     def run_publisher(self):
-        self.m_pub.publish(self.m_cmd)
+        if self.m_pub_flag:
+            self.m_pub.publish(self.m_cmd)
 
 
 class ChaiClient:
@@ -54,6 +56,9 @@ class ChaiClient:
         self.m_sub_list = []
         self.m_mutex = Lock()
         self.m_objects_dict = {}
+        self.m_sub_thread = []
+        self.m_pub_thread = []
+        self.m_rate = 0
         pass
 
     def get_obj_pose(self, a_name):
@@ -72,22 +77,22 @@ class ChaiClient:
         obj.command(fx, fy, fz, nx, ny, nz)
 
     def start(self):
-        self.start_subs()
         self.start_pubs()
 
     def start_subs(self):
-        tsub = threading.Thread(target=rospy.spin)
-        tsub.start()
+        self.m_sub_thread = threading.Thread(target=rospy.spin)
+        self.m_sub_thread.start()
 
     def start_pubs(self):
-        tpub = threading.Thread(target=self.run_obj_publishers)
-        tpub.start()
+        self.m_pub_thread = threading.Thread(target=self.run_obj_publishers)
+        self.m_pub_thread.daemon = True
+        self.m_pub_thread.start()
 
     def run_obj_publishers(self):
         while not rospy.is_shutdown():
             for key, obj in self.m_objects_dict.items():
                 obj.run_publisher()
-            rospy.sleep(0.001)
+            self.m_rate.sleep()
 
     def print_active_topics(self):
         print self.m_ros_topics
@@ -107,6 +112,8 @@ class ChaiClient:
 
     def create_objs_from_rostopics(self):
         rospy.init_node('chai_client')
+        rospy.on_shutdown(self.clean_up)
+        self.m_rate = rospy.Rate(1000)
         self.m_ros_topics = rospy.get_published_topics()
         for i in range(len(self.m_ros_topics)):
             for j in range(len(self.m_ros_topics[i])):
@@ -126,20 +133,8 @@ class ChaiClient:
                         obj.m_pub = rospy.Publisher(name=pub_topic_str, data_class=WrenchStamped, queue_size=10)
                         self.m_objects_dict[obj_name] = obj
 
+    def clean_up(self):
+        for key, val in self.m_objects_dict.iteritems():
+            val.m_pub_flag = False
+            print 'Closing publisher for: ', key
 
-
-def main():
-    clientObj = ChaiClient()
-    clientObj.create_objs_from_rostopics()
-    clientObj.print_summary()
-    clientObj.start()
-    while not rospy.is_shutdown():
-        obj = clientObj.get_obj_handle('Torus')
-        obj.command(0,0,0,0,0,0)
-        # print obj.m_name
-        # print obj.m_pose.position
-        rospy.sleep(0.1)
-
-
-if __name__=='__main__':
-    main()

@@ -21,6 +21,7 @@ class ChaiEnv():
 
         self.m_chai_client = ChaiClient()
         self.m_chai_client.create_objs_from_rostopics()
+        self.m_chai_client.print_summary()
         self.m_chai_client.start()
 
         self.m_obs = Observation()
