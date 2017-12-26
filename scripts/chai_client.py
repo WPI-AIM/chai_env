@@ -22,7 +22,7 @@ class WatchDog(object):
 
 
 class Object(WatchDog):
-    def __init__(self, a_name):
+    def __init__(self, a_name, rate=1000):
         super(Object, self).__init__()
         self.m_time_stamp = []
         self.m_name = a_name
@@ -31,6 +31,8 @@ class Object(WatchDog):
         self.m_pub = threading.Thread()
         self.m_sub = threading.Thread()
         self.m_pub_flag = True
+        self.m_pub_thread = threading.Thread
+        self.m_rate = rospy.Rate(rate)
 
     def ros_cb(self, data):
         self.m_name = data.name.data
@@ -67,10 +69,16 @@ class Object(WatchDog):
         return pose
 
     def run_publisher(self):
-        if self.m_pub_flag:
-            if self.is_wd_expired():
+        while self.m_pub_flag is True and not rospy.is_shutdown():
+            if self.is_wd_expired() is True:
                 self.clear_cmd()
             self.m_pub.publish(self.m_cmd)
+            self.m_rate.sleep()
+
+    def start_pub_thread(self):
+        self.m_pub_thread = threading.Thread(target=self.run_publisher)
+        self.m_pub_thread.daemon = True
+        self.m_pub_thread.start()
 
 
 class ChaiClient:
@@ -84,7 +92,6 @@ class ChaiClient:
         self.m_objects_dict = {}
         self.m_sub_thread = []
         self.m_pub_thread = []
-        self.m_rate = 0
         pass
 
     def get_obj_pose(self, a_name):
@@ -103,22 +110,8 @@ class ChaiClient:
         obj.command(fx, fy, fz, nx, ny, nz)
 
     def start(self):
-        self.start_pubs()
-
-    def start_subs(self):
-        self.m_sub_thread = threading.Thread(target=rospy.spin)
-        self.m_sub_thread.start()
-
-    def start_pubs(self):
-        self.m_pub_thread = threading.Thread(target=self.run_obj_publishers)
-        self.m_pub_thread.daemon = True
-        self.m_pub_thread.start()
-
-    def run_obj_publishers(self):
-        while not rospy.is_shutdown():
-            for key, obj in self.m_objects_dict.items():
-                obj.run_publisher()
-            self.m_rate.sleep()
+        for key, obj in self.m_objects_dict.items():
+            obj.start_pub_thread()
 
     def print_active_topics(self):
         print self.m_ros_topics
@@ -139,7 +132,6 @@ class ChaiClient:
     def create_objs_from_rostopics(self):
         rospy.init_node('chai_client')
         rospy.on_shutdown(self.clean_up)
-        self.m_rate = rospy.Rate(1000)
         self.m_ros_topics = rospy.get_published_topics()
         for i in range(len(self.m_ros_topics)):
             for j in range(len(self.m_ros_topics[i])):
