@@ -16,6 +16,8 @@ public:
     void set_time_stamp(double n_sec);
     void set_mass(double a_mass);
     void set_principal_intertia(double Ixx, double Iyy, double Izz);
+    void increment_sim_step();
+    void set_sim_step(uint step);
 };
 
 

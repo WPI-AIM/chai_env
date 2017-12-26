@@ -3,6 +3,7 @@
 RosCom::RosCom( std::string a_name, int a_freq){
     m_freq = a_freq;
     m_objectState.name.data = a_name;
+    m_objectState.sim_step = 0;
     int argc = 0;
     char **argv = 0;
     ros::init(argc, argv, "chai_env_node");

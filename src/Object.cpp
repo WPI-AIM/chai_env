@@ -48,6 +48,14 @@ void Object::set_principal_intertia(double Ixx, double Iyy, double Izz){
     m_objectState.pInertia.z = Izz;
 }
 
+void Object::increment_sim_step(){
+    m_objectState.sim_step++;
+}
+
+void Object::set_sim_step(uint step){
+    m_objectState.sim_step = step;
+}
+
 
 extern "C"{
 
