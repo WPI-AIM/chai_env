@@ -4,11 +4,26 @@ from threading import Lock
 import threading
 from geometry_msgs.msg import WrenchStamped, Pose
 from tf import transformations
-import time
 
 
-class Object:
+class WatchDog(object):
+    def __init__(self, time_out = 0.1):
+        self.m_expire_duration = rospy.Duration.from_sec(time_out)
+        self.m_next_cmd_expected_time = rospy.Time.now()
+
+    def acknowledge_wd(self):
+        self.m_next_cmd_expected_time = rospy.Time.now() + self.m_expire_duration
+
+    def is_wd_expired(self):
+        if rospy.Time.now() > self.m_next_cmd_expected_time:
+            return True
+        else:
+            return False
+
+
+class Object(WatchDog):
     def __init__(self, a_name):
+        super(Object, self).__init__()
         self.m_time_stamp = []
         self.m_name = a_name
         self.m_pose = Pose()
@@ -29,6 +44,15 @@ class Object:
         self.m_cmd.wrench.torque.x = nx
         self.m_cmd.wrench.torque.x = ny
         self.m_cmd.wrench.torque.x = nz
+        self.acknowledge_wd()
+
+    def clear_cmd(self):
+        self.m_cmd.wrench.force.x = 0
+        self.m_cmd.wrench.force.y = 0
+        self.m_cmd.wrench.force.z = 0
+        self.m_cmd.wrench.torque.x = 0
+        self.m_cmd.wrench.torque.x = 0
+        self.m_cmd.wrench.torque.x = 0
 
     def get_pose(self):
         quat = self.m_pose.orientation
@@ -44,6 +68,8 @@ class Object:
 
     def run_publisher(self):
         if self.m_pub_flag:
+            if self.is_wd_expired():
+                self.clear_cmd()
             self.m_pub.publish(self.m_cmd)
 
 
