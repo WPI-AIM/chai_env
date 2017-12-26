@@ -8,6 +8,7 @@
 #include <tf/tf.h>
 #include <tf/LinearMath/Transform.h>
 #include <ros/callback_queue.h>
+#include <ros/duration.h>
 
 struct WrenchCmd{
     WrenchCmd(){
@@ -23,7 +24,25 @@ struct WrenchCmd{
     double Nx, Ny, Nz;
 };
 
-class RosCom{
+class CmdWatchDog{
+    friend class RosCom;
+public:
+    CmdWatchDog(double time_out = 0.1){
+        m_expire_duration.fromSec(time_out);
+    }
+    void acknowledge_wd(){
+        m_next_cmd_expected_time= ros::Time::now() + m_expire_duration;
+    }
+    bool is_wd_expired(){
+        return ros::Time::now() > m_next_cmd_expected_time ? true : false;
+    }
+
+private:
+    ros::Time m_next_cmd_expected_time;
+    ros::Duration m_expire_duration;
+};
+
+class RosCom: public CmdWatchDog{
     friend class Object;
 public:
     RosCom(std::string a_name, int a_freq = 1000);

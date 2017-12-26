@@ -34,6 +34,7 @@ void RosCom::wrench_sub_cb(geometry_msgs::WrenchStampedConstPtr msg){
     m_wrenchCmd.Nx = m_wrenchStamped_Cmd.wrench.torque.x;
     m_wrenchCmd.Ny = m_wrenchStamped_Cmd.wrench.torque.y;
     m_wrenchCmd.Nz = m_wrenchStamped_Cmd.wrench.torque.z;
+    acknowledge_wd();
 }
 
 void RosCom::run_publishers(){
@@ -41,6 +42,9 @@ void RosCom::run_publishers(){
     while(nodePtr->ok()){
         obj_state_pub.publish(m_objectState);
         custom_queue.callAvailable();
+        if(is_wd_expired()){
+           m_wrenchCmd.clear_wrench();
+        }
         ratePtr->sleep();
     }
 }
