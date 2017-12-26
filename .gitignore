@@ -1,3 +1,6 @@
 *~
 *user
 *save
+*.pyc
+cisstLog.txt
+.idea/
