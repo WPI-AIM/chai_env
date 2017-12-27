@@ -47,7 +47,7 @@ class ChaiEnv():
                                   action[0][3],
                                   action[0][4],
                                   action[0][5])
-        time.sleep(0.01)
+        time.sleep(0.001)
         self.update_observation()
         return self.m_obs.cur_observation()
 

@@ -6,7 +6,7 @@ env = ChaiEnv()
 action = env.action_space
 env.make('Torus')
 env.reset()
-for i in range(1,500):
+for i in range(1,5000):
     state, r, d, dict = env.step(env.action_space.sample())
     print r
 input = raw_input('Enter input')
