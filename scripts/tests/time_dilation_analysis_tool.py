@@ -31,7 +31,7 @@ class TimeDilationAnalysis:
                     print 'Adjusting Time Offset'
                     self.first_run = False
                 self.sim_time.append(chai_sim_wall_time)
-                self.wall_time.append(data.mass)
+                self.wall_time.append(data.wall_time)
                 self.cur_time.append(time.Time.now().to_sec() - self.time_adjust)
                 self.sim_itrs.append(data.sim_step)
                 self.msg_itrs.append(data.header.seq)
