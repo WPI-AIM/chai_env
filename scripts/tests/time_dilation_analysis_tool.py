@@ -33,8 +33,8 @@ class TimeDilationAnalysis:
                 self.sim_time.append(chai_sim_wall_time)
                 self.wall_time.append(data.mass)
                 self.cur_time.append(time.Time.now().to_sec() - self.time_adjust)
-                self.msg_itrs.append(data.sim_step)
-                self.sim_itrs.append(data.header.seq)
+                self.sim_itrs.append(data.sim_step)
+                self.msg_itrs.append(data.header.seq)
             self.counter += 1
 
     def run(self):
