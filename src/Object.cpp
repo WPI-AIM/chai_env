@@ -57,6 +57,10 @@ void Object::set_sim_step(uint step){
     m_objectState.sim_step = step;
 }
 
+void Object::set_wall_time(double wall_time){
+    m_objectState.wall_time = wall_time;
+}
+
 
 extern "C"{
 

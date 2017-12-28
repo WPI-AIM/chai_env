@@ -18,6 +18,7 @@ public:
     void set_principal_intertia(double Ixx, double Iyy, double Izz);
     void increment_sim_step();
     void set_sim_step(uint step);
+    void set_wall_time(double wall_time);
 };
 
 
