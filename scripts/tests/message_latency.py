@@ -12,10 +12,12 @@ class MessageLatency:
         self.is_first_run = True
         self.msg_counter_num = []
         self.simstep_counter_num = []
-        self.latency = []
+        self.cb_counter_num = []
+        self.latency_list = []
+        self.latency_exceptions = 0
         self.initial_time_offset = 0
         self.mean_latency = 0.0
-        self.time_window_lims = [0.0, 20.0]
+        self.time_window_lims = [0.0, 2.0]
         self.window_times_captured = False
         self.done = False
 
@@ -23,7 +25,9 @@ class MessageLatency:
         self.load_type = 0
         self.dt_type = 0
 
-        self.x_axis_dict = {0: ['(Message Num)', self.msg_counter_num], 1: ['(Sim Step Num)', self.simstep_counter_num]}
+        self.x_axis_dict = {0: ['(Message Num)', self.msg_counter_num],
+                            1: ['(Sim Step Num)', self.simstep_counter_num],
+                            2: ['(Callback Num)', self.cb_counter_num]}
         self.dt_dict = {0: 'Fixed dt = 0.0005', 1: 'Dynamic dt'}
         self.load_dict = {0: '(No Load)', 1: '(Haptic Dev Load)'}
         pass
@@ -38,8 +42,7 @@ class MessageLatency:
     def obj_state_cb(self, data):
         self.capture_window_times(data.wall_time)
         if not self.done:
-            chai_sim_wall_time = rospy.Time.from_sec(data.wall_time)
-            chai_sim_wall_time = chai_sim_wall_time.to_nsec()
+            chai_sim_wall_time = rospy.Time.from_sec(data.wall_time).to_nsec()
             process_wall_time = rospy.Time.now().to_nsec()
             if chai_sim_wall_time > self.time_window_lims[0]:
                 if self.is_first_run:
@@ -54,44 +57,69 @@ class MessageLatency:
 
                     self.chai_process_wall_time.append(chai_sim_wall_time)
                     self.cur_process_wall_time.append(cur_wall_time_adjusted)
-                    self.latency.append(cur_wall_time_adjusted - chai_sim_wall_time)
+                    self.latency_list.append(cur_wall_time_adjusted - chai_sim_wall_time)
 
                     self.simstep_counter_num.append(data.sim_step)
                     self.msg_counter_num.append(data.header.seq)
-                self.cb_counter += 1
+                    self.cb_counter_num.append(self.cb_counter)
+                    self.cb_counter += 1
 
     def compute_mean_latency(self):
-        self.mean_latency = sum(self.latency) / len(self.latency)
-        print 'Mean Latency= ', self.mean_latency, ' | Itrs= ', len(self.latency), ' | Counter=', self.cb_counter
+        self.mean_latency = sum(self.latency_list) / len(self.latency_list)
+        print 'Mean Latency= ', self.mean_latency, ' | Itrs= ', len(self.latency_list), ' | Counter=', self.cb_counter
+
+    def convert_to_secs(self, t_list):
+        new_t_list = []
+        for idx in range(len(t_list)):
+            if t_list[idx] < 0.0:
+                t_list[idx] = 0.0
+                self.latency_exceptions += 1
+            else:
+                t_list[idx] = rospy.Time(0, t_list[idx]).to_sec()
+                new_t_list.append(rospy.Time(0, t_list[idx]).to_sec())
+
+        if self.latency_exceptions > 0:
+            print 'WARN, {} elements in this list were < 0.0, returning an' \
+                  ' optional modified list without those elements'.format(self.latency_exceptions)
+            return new_t_list
+            self.latency_exceptions = 0
+
+    def calculate_packets_dt(self, list):
+        new_list = []
+        for idx in range(1, len(list)-1):
+            new_list.append(list[idx] - list[idx-1])
+        return new_list
 
     def run(self):
         rospy.init_node('message_latency_inspector')
-        sub = rospy.Subscriber('/chai/env/Torus/State', ObjectState, self.obj_state_cb, queue_size=1)
+        sub = rospy.Subscriber('/chai/env/Torus/State', ObjectState, self.obj_state_cb, queue_size=50)
 
         print 'X Axis = ', self.x_axis_dict[self.x_axis_type][0]
         itrs = self.x_axis_dict[self.x_axis_type][1]
 
         while not rospy.is_shutdown() and not self.done:
             if len(itrs) > 0:
-                temp_time = self.chai_process_wall_time[-1]
-                temp_time = rospy.Time(0, temp_time)
-                temp_time = temp_time.to_sec()
+                temp_time = rospy.Time(0, self.chai_process_wall_time[-1]).to_sec()
                 if temp_time > self.time_window_lims[1]:
                     title_str = self.load_dict[self.load_type] +\
                                 '+' + self.x_axis_dict[self.x_axis_type][0] +\
                                 '+' + self.dt_dict[self.dt_type]
                     self.done = True
 
+        self.convert_to_secs(self.cur_process_wall_time)
+        self.convert_to_secs(self.chai_process_wall_time)
+        self.convert_to_secs(self.latency_list)
+
         self.compute_mean_latency()
         plt.figure(1)
         plt.subplot(311)
-        plt.hist(self.latency, bins='auto', stacked=True)
+        plt.hist(self.latency_list, bins='auto', stacked=True)
         plt.grid(True)
         plt.title(title_str)
 
         # plt.figure(2)
         plt.subplot(312)
-        lt, = plt.plot(itrs, self.latency, color='r', linewidth=1.0)
+        lt, = plt.plot(self.latency_list, color='r', linewidth=1.0)
         plt.grid(True)
         plt.legend([lt], ['Latency over time'])
 
@@ -101,6 +129,25 @@ class MessageLatency:
         wt, = plt.plot(itrs, self.chai_process_wall_time, color='g')
         plt.grid(True)
         plt.legend([ct, wt], ['Process Wall Time', 'Chai Wall Time'])
+
+        plt.figure(2)
+
+        dt_cur_wall_times = self.calculate_packets_dt(self.cur_process_wall_time)
+        dt_chai_wall_times = self.calculate_packets_dt(self.chai_process_wall_time)
+
+        plt.subplot(311)
+        cur_dt_axes_1 = plt.scatter(itrs[0:-2], dt_cur_wall_times, color='r', marker='.', s=5)
+        plt.grid(True)
+        plt.subplot(312)
+        chai_dt_axes_1 = plt.scatter(itrs[0:-2], dt_chai_wall_times, color='g', marker='.', s=5)
+        plt.grid(True)
+        plt.subplot(313)
+        cur_dt_axes_2 = plt.scatter(itrs[0:-2], dt_cur_wall_times, color='r', marker='.', s=5)
+        chai_dt_axes_2 = plt.scatter(itrs[0:-2], dt_chai_wall_times, color='g', marker='.', s=5)
+        plt.grid(True)
+        plt.legend([cur_dt_axes_1, chai_dt_axes_1, cur_dt_axes_2, chai_dt_axes_2],
+                   ['Cur Process dt', 'Chai Process dt', 'Cur Process dt', 'Chai Process dt'])
+
         plt.show()
 
 
