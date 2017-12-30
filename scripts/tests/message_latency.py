@@ -15,7 +15,8 @@ class MessageLatency:
         self.latency = []
         self.initial_time_offset = 0
         self.mean_latency = 0.0
-        self.time_window_lims = [1.0, 21.0]
+        self.time_window_lims = [0.0, 20.0]
+        self.window_times_captured = False
         self.done = False
 
         self.x_axis_type = 0
@@ -27,7 +28,15 @@ class MessageLatency:
         self.load_dict = {0: '(No Load)', 1: '(Haptic Dev Load)'}
         pass
 
+    def capture_window_times(self, time):
+        if not self.window_times_captured:
+            self.time_window_lims[0] = time + 1.0
+            self.time_window_lims[1] += self.time_window_lims[0]
+            print 'Capturing Time from {} to {}'.format(self.time_window_lims[0], self.time_window_lims[1])
+            self.window_times_captured = True
+
     def obj_state_cb(self, data):
+        self.capture_window_times(data.wall_time)
         if not self.done:
             chai_sim_wall_time = rospy.Time.from_sec(data.wall_time)
             chai_sim_wall_time = chai_sim_wall_time.to_nsec()
