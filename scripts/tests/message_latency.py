@@ -65,13 +65,13 @@ class MessageLatency:
         self.mean_latency = sum(self.latency_list) / len(self.latency_list)
         print 'Mean Latency= ', self.mean_latency, ' | Itrs= ', len(self.latency_list), ' | Counter=', self.cb_counter
 
-        total_packets = self.msg_counter_num[-1] - self.msg_counter_num[0]
+        total_packets = (self.msg_counter_num[-1] + 1) - self.msg_counter_num[0]
         total_packets_rcvd = len(self.msg_counter_num)
         percent_packets_rcvd = (total_packets_rcvd * 1.0) / (total_packets * 1.0)
 
         print 'Total packets sent by C++ Server: ', total_packets
         print 'Total packets received by Client: ', total_packets_rcvd
-        print 'Percentage of packets received  : ', percent_packets_rcvd
+        print 'Percentage of packets received  : {}%'.format(100 * percent_packets_rcvd)
 
     def calculate_packets_dt(self, list):
         new_list = []
@@ -81,7 +81,7 @@ class MessageLatency:
 
     def run(self):
         rospy.init_node('message_latency_inspector')
-        sub = rospy.Subscriber('/chai/env/Torus/State', ObjectState, self.obj_state_cb, queue_size=5)
+        sub = rospy.Subscriber('/chai/env/Torus/State', ObjectState, self.obj_state_cb, queue_size=50)
 
         print 'X Axis = ', self.x_axis_dict[self.x_axis_type][0]
         x_axis_indx = self.x_axis_dict[self.x_axis_type][1]
