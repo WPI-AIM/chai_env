@@ -34,10 +34,14 @@ void Object::cur_torque(double nx, double ny, double nz){
     tf::vector3TFToMsg(n, m_objectState.wrench_cur.torque);
 }
 
-void Object::set_chai_time_stamp(double a_sec){
+void Object::set_chai_wall_time(double a_sec){
     m_objectState.chai_wall_time = a_sec;
     increment_sim_step();
     m_objectState.header.stamp = ros::Time::now();
+}
+
+void Object::set_chai_sim_time(double a_sec){
+    m_objectState.chai_sim_time = a_sec;
 }
 
 void Object::set_mass(double a_mass){
