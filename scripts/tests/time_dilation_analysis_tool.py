@@ -6,9 +6,9 @@ import rospy.rostime as time
 
 class TimeDilationAnalysis:
     def __init__(self):
-        self.sim_time = []
-        self.wall_time = []
-        self.cur_time = []
+        self.chai_sim_time = []
+        self.chai_wall_time = []
+        self.cur_wall_time = []
         self.itrs = []
         self.counter = 0
         self.first_run = True
@@ -23,16 +23,17 @@ class TimeDilationAnalysis:
         pass
 
     def obj_state_cb(self, data):
-        chai_sim_wall_time = data.header.stamp.to_sec()
-        if chai_sim_wall_time > 0.0:
+        chai_sim_time = data.chai_sim_time
+        chai_wall_time = data.chai_wall_time
+        if chai_wall_time > 0.0:
             if self.counter % 50 == 0:
                 if self.first_run:
-                    self.time_adjust = rospy.Time.now().to_sec() - chai_sim_wall_time
+                    self.time_adjust = rospy.Time.now().to_sec() - chai_wall_time
                     print 'Adjusting Time Offset'
                     self.first_run = False
-                self.sim_time.append(chai_sim_wall_time)
-                self.wall_time.append(data.wall_time)
-                self.cur_time.append(time.Time.now().to_sec() - self.time_adjust)
+                self.chai_sim_time.append(chai_sim_time)
+                self.chai_wall_time.append(chai_wall_time)
+                self.cur_wall_time.append(time.Time.now().to_sec() - self.time_adjust)
                 self.sim_itrs.append(data.sim_step)
                 self.msg_itrs.append(data.header.seq)
             self.counter += 1
@@ -51,14 +52,14 @@ class TimeDilationAnalysis:
         plt.ylim([0, 22])
         while not rospy.is_shutdown():
             if len(itrs) > 0:
-                if 0.1 < self.wall_time[-1] <= 20.0:
-                    ct_axes, = plt.plot(itrs, self.cur_time)
-                    wt_axes, = plt.plot(itrs, self.wall_time)
-                    st_axes, = plt.plot(itrs, self.sim_time)
+                if 0.1 < self.chai_wall_time[-1] <= 20.0:
+                    ct_axes, = plt.plot(itrs, self.cur_wall_time)
+                    wt_axes, = plt.plot(itrs, self.chai_wall_time)
+                    st_axes, = plt.plot(itrs, self.chai_sim_time)
                     self.plt.grid(True)
                     self.plt.xlabel(self.x_axis_str)
                     self.plt.ylabel('(Time)')
-                    self.plt.setp(wt_axes, color='r', linewidth=4.0)
+                    self.plt.setp(wt_axes, color='r', linewidth=1.0)
                     self.plt.setp(st_axes, color='g', linewidth=1.0, marker='|', markersize=10)
                     self.plt.setp(ct_axes, color='b', linewidth=1.0, marker='x', markersize=10)
                     self.plt.legend([wt_axes, st_axes, ct_axes], ['Chai Wall Time', 'Simulation Time', 'Current Time'])
