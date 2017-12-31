@@ -16,7 +16,7 @@ class MessageLatency:
         self.latency_exceptions = 0
         self.initial_time_offset = 0
         self.mean_latency = 0.0
-        self.time_window_lims = [0.0, 10.0]
+        self.time_window_lims = [0.0, 1.0]
         self.window_times_captured = False
         self.done = False
 
@@ -64,6 +64,14 @@ class MessageLatency:
     def compute_mean_latency(self):
         self.mean_latency = sum(self.latency_list) / len(self.latency_list)
         print 'Mean Latency= ', self.mean_latency, ' | Itrs= ', len(self.latency_list), ' | Counter=', self.cb_counter
+
+        total_packets = self.msg_counter_num[-1] - self.msg_counter_num[0]
+        total_packets_rcvd = len(self.msg_counter_num)
+        percent_packets_rcvd = (total_packets_rcvd * 1.0) / (total_packets * 1.0)
+
+        print 'Total packets sent by C++ Server: ', total_packets
+        print 'Total packets received by Client: ', total_packets_rcvd
+        print 'Percentage of packets received  : ', percent_packets_rcvd
 
     def calculate_packets_dt(self, list):
         new_list = []
