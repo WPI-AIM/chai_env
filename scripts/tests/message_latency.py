@@ -16,19 +16,20 @@ class MessageLatency:
         self.latency_exceptions = 0
         self.initial_time_offset = 0
         self.mean_latency = 0.0
-        self.time_window_lims = [0.0, 1.0]
+        self.time_window_lims = [0.0, 10.0]
         self.window_times_captured = False
         self.done = False
+        self.queue_size = 50
 
-        self.x_axis_type = 0
-        self.load_type = 0
-        self.dt_type = 0
+        self.x_axis_type = 0  # 0:'Message Num' | 1:'Sim Step Num'    | 2:'Callback Num'
+        self.load_type = 0  # 0:'No Load'     | 1:'Haptic Dev Load' | 2:'Client Load' | 3:'Haptic Dev & Client Load'
+        self.dt_type = 1  # 0:'Dynamic dt'  | 1:'Fixed dt = 0.0005'
 
-        self.x_axis_dict = {0: ['(Message Num)', self.msg_counter_num],
-                            1: ['(Sim Step Num)', self.simstep_counter_num],
-                            2: ['(Callback Num)', self.cb_counter_num]}
+        self.x_axis_dict = {0: ['Message Num', self.msg_counter_num],
+                            1: ['Sim Step Num', self.simstep_counter_num],
+                            2: ['Callback Num', self.cb_counter_num]}
+        self.load_dict = {0: 'No Load', 1: 'Haptic Dev Load', 2: 'Client Load', 3: 'Haptic Dev & Client Load'}
         self.dt_dict = {0: 'Dynamic dt', 1: 'Fixed dt = 0.0005'}
-        self.load_dict = {0: '(No Load)', 1: '(Haptic Dev Load)'}
         pass
 
     def capture_window_times(self, time):
@@ -81,7 +82,7 @@ class MessageLatency:
 
     def run(self):
         rospy.init_node('message_latency_inspector')
-        sub = rospy.Subscriber('/chai/env/Torus/State', ObjectState, self.obj_state_cb, queue_size=50)
+        sub = rospy.Subscriber('/chai/env/Torus/State', ObjectState, self.obj_state_cb, queue_size=self.queue_size)
 
         print 'X Axis = ', self.x_axis_dict[self.x_axis_type][0]
         x_axis_indx = self.x_axis_dict[self.x_axis_type][1]

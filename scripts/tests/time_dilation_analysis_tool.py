@@ -9,7 +9,7 @@ class TimeDilationAnalysis:
         self.chai_sim_time = []
         self.chai_wall_time = []
         self.cur_wall_time = []
-        self.time_window_lims = [0.0, 5.0]
+        self.time_window_lims = [0.0, 20.0]
         self.counter = 0
         self.first_run = True
         self.done = False
@@ -18,15 +18,15 @@ class TimeDilationAnalysis:
         self.cb_counter_num = []
         self.initial_time_offset = 0
 
-        self.x_axis_type = 0
-        self.load_type = 0
-        self.dt_type = 0
+        self.x_axis_type = 0    # 0:'Message Num' | 1:'Sim Step Num'    | 2:'Callback Num'
+        self.load_type = 2      # 0:'No Load'     | 1:'Haptic Dev Load' | 2:'Client Load' | 3:'Haptic Dev & Client Load'
+        self.dt_type = 0        # 0:'Dynamic dt'  | 1:'Fixed dt = 0.0005'
 
-        self.x_axis_dict = {0: ['(Message Num)', self.msg_counter_num],
-                            1: ['(Sim Step Num)', self.simstep_counter_num],
-                            2: ['(Callback Num)', self.cb_counter_num]}
+        self.x_axis_dict = {0: ['Message Num', self.msg_counter_num],
+                            1: ['Sim Step Num', self.simstep_counter_num],
+                            2: ['Callback Num', self.cb_counter_num]}
+        self.load_dict = {0: 'No Load', 1: 'Haptic Dev Load', 2: 'Client Load', 3: 'Haptic Dev & Client Load'}
         self.dt_dict = {0: 'Dynamic dt', 1: 'Fixed dt = 0.0005'}
-        self.load_dict = {0: '(No Load)', 1: '(Haptic Dev Load)'}
         pass
 
     def capture_window_times(self, time):
@@ -59,9 +59,9 @@ class TimeDilationAnalysis:
         print 'X Axis = ', self.x_axis_dict[self.x_axis_type][0]
         x_axis_indx = self.x_axis_dict[self.x_axis_type][1]
 
-        title_str = self.load_dict[self.load_type]+\
-                    '+' + self.x_axis_dict[self.x_axis_type][0]+\
-                    '+' + self.dt_dict[self.dt_type]
+        title_str = self.load_dict[self.load_type] + \
+                    ' + ' + self.x_axis_dict[self.x_axis_type][0] + \
+                    ' + ' + self.dt_dict[self.dt_type]
         plt.title(title_str)
         while not rospy.is_shutdown():
             if len(x_axis_indx) > 0:
@@ -72,8 +72,8 @@ class TimeDilationAnalysis:
                     plt.grid(True)
                     plt.xlabel(self.x_axis_dict[self.x_axis_type][0])
                     plt.ylabel('(Time)')
-                    plt.setp(ct_axes, color='b', linewidth=1.0, marker='o', markersize=6)
-                    plt.setp(wt_axes, color='r', linewidth=1.0, marker='o', markersize=3.5)
+                    plt.setp(ct_axes, color='b', linewidth=1.0, marker='o', markersize=8)
+                    plt.setp(wt_axes, color='r', linewidth=1.0, marker='o', markersize=5)
                     plt.setp(st_axes, color='g', linewidth=1.0, marker='o', markersize=2.5)
                     plt.legend([ct_axes, wt_axes, st_axes], ['Current Time', 'Chai Wall Time', 'Simulation Time'])
                     plt.draw()
