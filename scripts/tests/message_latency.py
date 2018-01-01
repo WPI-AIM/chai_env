@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import rospy
 from chai_msg.msg import ObjectState
 import matplotlib.pyplot as plt

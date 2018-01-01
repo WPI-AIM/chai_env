@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 from chai_env import ChaiEnv
 import time
 

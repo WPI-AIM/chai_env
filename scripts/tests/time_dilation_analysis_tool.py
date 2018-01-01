@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import rospy
 from chai_msg.msg import ObjectState
 import matplotlib.pyplot as plt
@@ -19,7 +20,7 @@ class TimeDilationAnalysis:
         self.initial_time_offset = 0
 
         self.x_axis_type = 0    # 0:'Message Num' | 1:'Sim Step Num'    | 2:'Callback Num'
-        self.load_type = 2      # 0:'No Load'     | 1:'Haptic Dev Load' | 2:'Client Load' | 3:'Haptic Dev & Client Load'
+        self.load_type = 0      # 0:'No Load'     | 1:'Haptic Dev Load' | 2:'Client Load' | 3:'Haptic Dev & Client Load'
         self.dt_type = 0        # 0:'Dynamic dt'  | 1:'Fixed dt = 0.0005'
 
         self.x_axis_dict = {0: ['Message Num', self.msg_counter_num],

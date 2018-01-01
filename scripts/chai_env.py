@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 from chai_client import ChaiClient, Object
 from gym import spaces
 import numpy as np

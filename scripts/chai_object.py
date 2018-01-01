@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 from tf import transformations
 from geometry_msgs.msg import WrenchStamped, Pose
 from watch_dog import WatchDog
