@@ -1,5 +1,5 @@
-#ifndef ROSCOM_H
-#define ROSCOM_H
+#ifndef OBJECTROSCOM_H
+#define OBJECTROSCOM_H
 
 #include <ros/ros.h>
 #include <boost/thread.hpp>
@@ -25,7 +25,6 @@ struct WrenchCmd{
 };
 
 class CmdWatchDog{
-    friend class RosCom;
 public:
     CmdWatchDog(double time_out = 0.1){
         m_expire_duration.fromSec(time_out);
@@ -43,7 +42,6 @@ private:
 };
 
 class ObjectRosCom: public CmdWatchDog{
-    friend class Object;
 public:
     ObjectRosCom(std::string a_name, int a_freq = 1000);
     ~ObjectRosCom();
@@ -51,7 +49,7 @@ public:
     WrenchCmd m_wrenchCmd;
 
 
-private:
+protected:
     boost::shared_ptr<ros::NodeHandle> nodePtr;
     boost::shared_ptr<ros::AsyncSpinner> aspinPtr;
     boost::shared_ptr<ros::Rate> ratePtr;

@@ -1,5 +1,6 @@
 #include "chai_env/World.h"
 
+namespace chai_env{
 World::World(std::string a_name): WorldRosCom(a_name){
 
 }
@@ -28,4 +29,5 @@ void destroy_world(World* obj){
     delete obj;
 }
 
+}
 }

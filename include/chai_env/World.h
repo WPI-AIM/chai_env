@@ -4,6 +4,7 @@
 #include <string>
 #include "chai_env/WorldRosCom.h"
 
+namespace chai_env{
 class World: public WorldRosCom{
 public:
     World(std::string a_name);
@@ -11,6 +12,6 @@ public:
     void set_chai_sim_time(double a_sec);
     void increment_sim_step();
 };
-
+}
 
 #endif

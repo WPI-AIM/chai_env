@@ -8,14 +8,14 @@ ChaiEnv::ChaiEnv(){
 
 void ChaiEnv::add_object(std::string name){
     if(!object_exists(name)){
-        m_objectMap[name] = boost::shared_ptr<Object>(new Object(name));
+        m_objectMap[name] = boost::shared_ptr<chai_env::Object>(new chai_env::Object(name));
     }
     else{
         std::cerr<< "ERROR!, OBJECT: \""<< name << "\" ALREADY EXISTS. IGNORING" << std::endl;
     }
 }
 
-Object* ChaiEnv::get_object_handle(std::string name){
+chai_env::Object* ChaiEnv::get_object_handle(std::string name){
     if(object_exists(name)){
         return m_objectMap[name].get();
     }

@@ -4,6 +4,7 @@
 #include <string>
 #include "chai_env/ObjectRosCom.h"
 
+namespace chai_env{
 class Object: public ObjectRosCom{
 public:
     Object(std::string a_name);
@@ -20,6 +21,6 @@ public:
     void increment_sim_step();
     void set_sim_step(uint step);
 };
-
+}
 
 #endif

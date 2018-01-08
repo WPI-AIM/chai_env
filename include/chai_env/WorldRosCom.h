@@ -1,5 +1,5 @@
-#ifndef ROSCOM_H
-#define ROSCOM_H
+#ifndef WORLDROSCOM_H
+#define WORLDROSCOM_H
 
 #include <ros/ros.h>
 #include <boost/thread.hpp>
@@ -11,13 +11,12 @@
 #include <ros/duration.h>
 
 class WorldRosCom{
-    friend class World;
 public:
     WorldRosCom(std::string a_name, int a_freq = 1000);
     ~WorldRosCom();
     void run_publishers();
 
-private:
+protected:
     boost::shared_ptr<ros::NodeHandle> nodePtr;
     boost::shared_ptr<ros::AsyncSpinner> aspinPtr;
     boost::shared_ptr<ros::Rate> ratePtr;

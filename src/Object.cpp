@@ -1,5 +1,5 @@
 #include "chai_env/Object.h"
-
+namespace chai_env{
 Object::Object(std::string a_name): ObjectRosCom(a_name){
 
 }
@@ -71,6 +71,8 @@ Object* create_object(std::string name){
 
 void destroy_object(Object* obj){
     delete obj;
+}
+
 }
 
 }
