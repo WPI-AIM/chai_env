@@ -82,7 +82,7 @@ class TimeDilationAnalysis:
                 if self.chai_wall_time[-1] > self.time_window_lims[1]:
                     self.done = True
                     break
-        plt.savefig(title_str + '.png', bbox_inches='tight')
+        plt.savefig('./graphs/' + title_str + '.png', bbox_inches='tight')
         plt.show()
 
 
