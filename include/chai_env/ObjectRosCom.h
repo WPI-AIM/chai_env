@@ -42,11 +42,11 @@ private:
     ros::Duration m_expire_duration;
 };
 
-class RosCom: public CmdWatchDog{
+class ObjectRosCom: public CmdWatchDog{
     friend class Object;
 public:
-    RosCom(std::string a_name, int a_freq = 1000);
-    ~RosCom();
+    ObjectRosCom(std::string a_name, int a_freq = 1000);
+    ~ObjectRosCom();
     void run_publishers();
     WrenchCmd m_wrenchCmd;
 

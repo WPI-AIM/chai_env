@@ -1,6 +1,6 @@
 #include "chai_env/Object.h"
 
-Object::Object(std::string a_name): RosCom(a_name){
+Object::Object(std::string a_name): ObjectRosCom(a_name){
 
 }
 

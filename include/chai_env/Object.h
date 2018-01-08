@@ -2,9 +2,9 @@
 #define OBJECT_H
 
 #include <string>
-#include "chai_env/RosCom.h"
+#include "chai_env/ObjectRosCom.h"
 
-class Object: public RosCom{
+class Object: public ObjectRosCom{
 public:
     Object(std::string a_name);
     inline void set_name(std::string name){m_objectState.name.data = name;}

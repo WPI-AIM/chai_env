@@ -103,7 +103,7 @@ catkin_python_setup()
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
   INCLUDE_DIRS include
-  LIBRARIES chai_env
+  LIBRARIES chai_env chai_obj chai_world
 #  CATKIN_DEPENDS other_catkin_pkg
 #  DEPENDS system_lib
 )
@@ -119,17 +119,40 @@ include_directories(
  ${catkin_INCLUDE_DIRS}
 )
 
-set (HDR_FILES include/${PROJECT_NAME}/chai_env.h
+set (ENV_HDR_FILES include/${PROJECT_NAME}/chai_env.h
                include/${PROJECT_NAME}/Object.h
-               include/${PROJECT_NAME}/RosCom.h)
+               include/${PROJECT_NAME}/ObjectRosCom.h)
 
-set (SRC_FILES src/chai_env.cpp
+set (ENV_SRC_FILES src/chai_env.cpp
                src/Object.cpp
-               src/RosCom.cpp)
+               src/ObjectRosCom.cpp)
+
+set (OBJ_HDR_FILES include/${PROJECT_NAME}/Object.h
+               include/${PROJECT_NAME}/ObjectRosCom.h)
+
+
+set (OBJ_SRC_FILES src/Object.cpp
+               src/ObjectRosCom.cpp)
+
+
+set (WORLD_HDR_FILES include/${PROJECT_NAME}/World.h
+               include/${PROJECT_NAME}/WorldRosCom.h)
+
+
+set (WORLD_SRC_FILES src/World.cpp
+               src/WorldRosCom.cpp)
 
 ## Declare a C++ library
- add_library(chai_env ${HDR_FILES}
-   ${SRC_FILES}
+ add_library(chai_env ${ENV_HDR_FILES}
+   ${ENV_SRC_FILES}
+ )
+
+add_library(chai_obj ${OBJ_HDR_FILES}
+   ${OBJ_SRC_FILES}
+ )
+
+add_library(chai_world ${WORLD_HDR_FILES}
+   ${WORLD_SRC_FILES}
  )
 
 ## Add cmake target dependencies of the library
@@ -154,6 +177,14 @@ set (SRC_FILES src/chai_env.cpp
 
 ## Specify libraries to link a library or executable target against
  target_link_libraries(chai_env
+   ${catkin_LIBRARIES}
+ )
+
+target_link_libraries(chai_obj
+   ${catkin_LIBRARIES}
+ )
+
+target_link_libraries(chai_world
    ${catkin_LIBRARIES}
  )
 
