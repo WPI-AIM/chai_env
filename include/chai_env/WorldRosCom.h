@@ -15,6 +15,7 @@ public:
     WorldRosCom(std::string a_name, int a_freq = 1000);
     ~WorldRosCom();
     void run_publishers();
+    bool m_pauseSim;
 
 protected:
     boost::shared_ptr<ros::NodeHandle> nodePtr;
@@ -29,9 +30,12 @@ protected:
 
     chai_msg::WorldState m_worldState;
     chai_msg::WorldCmd m_worldCmd;
+    chai_msg::WorldCmd m_worldCmdPrev;
 
     boost::thread m_thread;
     ros::CallbackQueue custom_queue;
+
+    bool m_enableSimThrottle;
 
     void world_sub_cb(chai_msg::WorldCmdConstPtr msg);
 };

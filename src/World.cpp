@@ -16,6 +16,9 @@ void World::set_chai_sim_time(double a_sec){
 }
 
 void World::increment_sim_step(){
+    if(m_enableSimThrottle){
+        m_pauseSim = true;
+    }
     m_worldState.sim_step++;
 }
 

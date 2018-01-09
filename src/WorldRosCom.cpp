@@ -4,6 +4,8 @@ WorldRosCom::WorldRosCom( std::string a_name, int a_freq){
     m_freq = a_freq;
     m_name = a_name;
     m_worldState.sim_step = 0;
+    m_pauseSim = false;
+    m_enableSimThrottle = false;
     int argc = 0;
     char **argv = 0;
     ros::init(argc, argv, "chai_env_node");
@@ -27,7 +29,18 @@ WorldRosCom::~WorldRosCom(){
 }
 
 void WorldRosCom::world_sub_cb(chai_msg::WorldCmdConstPtr msg){
+    m_worldCmdPrev = m_worldCmd;
     m_worldCmd = *msg;
+    m_enableSimThrottle = (bool)m_worldCmd.enable_step_throttling;
+    if (m_enableSimThrottle){
+        if(m_pauseSim){
+            m_pauseSim = !((bool)m_worldCmd.step ^ (bool)m_worldCmdPrev.step);
+        }
+    }
+    else{
+            m_pauseSim = false;
+    }
+
 }
 
 void WorldRosCom::run_publishers(){
