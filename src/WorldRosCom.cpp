@@ -13,7 +13,7 @@ WorldRosCom::WorldRosCom( std::string a_name, int a_freq){
     aspinPtr.reset(new ros::AsyncSpinner(1));
     ratePtr.reset(new ros::Rate(m_freq));
     nodePtr->setCallbackQueue(&custom_queue);
-
+    m_wd = CmdWatchDog(0.5);
 
     chai_namespace = "chai/env";
     world_state_pub = nodePtr->advertise<chai_msg::WorldState>("/" + chai_namespace + "/" + a_name + "/State", 10);
@@ -40,13 +40,17 @@ void WorldRosCom::world_sub_cb(chai_msg::WorldCmdConstPtr msg){
     else{
             m_pauseSim = false;
     }
-
+    m_wd.acknowledge_wd();
 }
 
 void WorldRosCom::run_publishers(){
     while(nodePtr->ok()){
         world_state_pub.publish(m_worldState);
         custom_queue.callAvailable();
+        if(m_wd.is_wd_expired()){
+           m_enableSimThrottle = false;
+           m_pauseSim = false;
+        }
         ratePtr->sleep();
     }
 }

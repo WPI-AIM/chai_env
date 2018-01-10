@@ -121,14 +121,16 @@ include_directories(
 
 set (ENV_HDR_FILES include/${PROJECT_NAME}/chai_env.h
                include/${PROJECT_NAME}/Object.h
-               include/${PROJECT_NAME}/ObjectRosCom.h)
+               include/${PROJECT_NAME}/ObjectRosCom.h
+	       include/${PROJECT_NAME}/CmdWatchDog.h)
 
 set (ENV_SRC_FILES src/chai_env.cpp
                src/Object.cpp
                src/ObjectRosCom.cpp)
 
 set (OBJ_HDR_FILES include/${PROJECT_NAME}/Object.h
-               include/${PROJECT_NAME}/ObjectRosCom.h)
+               include/${PROJECT_NAME}/ObjectRosCom.h
+	       include/${PROJECT_NAME}/CmdWatchDog.h)
 
 
 set (OBJ_SRC_FILES src/Object.cpp
@@ -136,7 +138,8 @@ set (OBJ_SRC_FILES src/Object.cpp
 
 
 set (WORLD_HDR_FILES include/${PROJECT_NAME}/World.h
-               include/${PROJECT_NAME}/WorldRosCom.h)
+               include/${PROJECT_NAME}/WorldRosCom.h
+	       include/${PROJECT_NAME}/CmdWatchDog.h)
 
 
 set (WORLD_SRC_FILES src/World.cpp

@@ -22,6 +22,10 @@ void World::increment_sim_step(){
     m_worldState.sim_step++;
 }
 
+bool World::pauseSim(){
+    return m_pauseSim;
+}
+
 extern "C"{
 
 World* create_world(std::string name){

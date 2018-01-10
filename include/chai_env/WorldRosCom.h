@@ -9,6 +9,7 @@
 #include <tf/LinearMath/Transform.h>
 #include <ros/callback_queue.h>
 #include <ros/duration.h>
+#include "chai_env/CmdWatchDog.h"
 
 class WorldRosCom{
 public:
@@ -22,6 +23,7 @@ protected:
     boost::shared_ptr<ros::AsyncSpinner> aspinPtr;
     boost::shared_ptr<ros::Rate> ratePtr;
     int m_freq;
+    CmdWatchDog m_wd;
 
     std::string chai_namespace;
     std::string m_name;

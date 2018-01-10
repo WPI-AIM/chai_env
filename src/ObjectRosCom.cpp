@@ -11,7 +11,7 @@ ObjectRosCom::ObjectRosCom( std::string a_name, int a_freq){
     aspinPtr.reset(new ros::AsyncSpinner(5));
     ratePtr.reset(new ros::Rate(m_freq));
     nodePtr->setCallbackQueue(&custom_queue);
-
+    m_wd = CmdWatchDog(0.1);
 
     chai_namespace = "chai/env";
     obj_state_pub = nodePtr->advertise<chai_msg::ObjectState>("/" + chai_namespace + "/" + a_name + "/State", 10);
@@ -34,7 +34,7 @@ void ObjectRosCom::wrench_sub_cb(geometry_msgs::WrenchStampedConstPtr msg){
     m_wrenchCmd.Nx = m_wrenchStamped_Cmd.wrench.torque.x;
     m_wrenchCmd.Ny = m_wrenchStamped_Cmd.wrench.torque.y;
     m_wrenchCmd.Nz = m_wrenchStamped_Cmd.wrench.torque.z;
-    acknowledge_wd();
+    m_wd.acknowledge_wd();
 }
 
 void ObjectRosCom::run_publishers(){
@@ -42,7 +42,7 @@ void ObjectRosCom::run_publishers(){
     while(nodePtr->ok()){
         obj_state_pub.publish(m_objectState);
         custom_queue.callAvailable();
-        if(is_wd_expired()){
+        if(m_wd.is_wd_expired()){
            m_wrenchCmd.clear_wrench();
         }
         ratePtr->sleep();
