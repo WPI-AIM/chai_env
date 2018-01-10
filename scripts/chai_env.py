@@ -12,6 +12,7 @@ class Observation:
         self.reward = 0.0
         self.is_done = False
         self.info = {}
+        self.m_sim_step_no = 0
 
     def cur_observation(self):
         return np.array(self.state), self.reward, self.is_done, self.info
@@ -27,7 +28,7 @@ class ChaiEnv():
         self.m_chai_client.start()
 
         self.m_obs = Observation()
-        input = np.array([ 0.1, 0.1, 0.100, 0.2, 0.2, 0.2])
+        input = np.array([ 30, 30, 30, 2, 2, 2])
         self.action_space = spaces.Box(-input, input)
         self.observation_space = spaces.Box(-np.inf, np.inf, shape=(6,))
 
@@ -37,6 +38,7 @@ class ChaiEnv():
 
     def make(self, a_name):
         self.m_obj_handle = self.m_chai_client.get_obj_handle(a_name)
+        self.m_chai_client.enable_throttling(True)
         if self.m_obj_handle is None:
             raise Exception
 
@@ -45,8 +47,8 @@ class ChaiEnv():
         return self.step(action)[0]
 
     def step(self, action):
-        action[0:3] = np.clip(action[0:3], -5, 5)
-        action[3:6] = np.clip(action[3:6], -0.5, 0.5)
+        # action[0:3] = np.clip(action[0:3], -10, 10)
+        # action[3:6] = np.clip(action[3:6], -2, 2)
         assert len(action) == 6
         self.m_obj_handle.command(action[0],
                                   action[1],
@@ -54,7 +56,7 @@ class ChaiEnv():
                                   action[3],
                                   action[4],
                                   action[5])
-        time.sleep(0.001)
+        time.sleep(0.005)
         self.update_observation()
         return self.m_obs.cur_observation()
 
@@ -62,13 +64,17 @@ class ChaiEnv():
         print ' I am a {} POTATO'.format(mode)
 
     def update_observation(self):
-        self.m_obs.state = self.m_obj_handle.get_pose()
-        self.m_obs.reward = self.calculate_reward()
+        state = 0
+        while state == 0:
+            state = self.m_obj_handle.get_pose()
+
+        self.m_obs.state = state
+        self.m_obs.reward = self.calculate_reward(state)
         self.m_obs.is_done = self.check_if_done()
         self.m_obs.info = self.update_info()
 
-    def calculate_reward(self):
-        cur_pose = self.m_obj_handle.get_pose()
+    def calculate_reward(self, state):
+        cur_pose = state
         pos_epsilon = 0.5
         rot_epsilon = 0.1
         reward = 0.0

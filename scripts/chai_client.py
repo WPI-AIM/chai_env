@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 import rospy
-from chai_msg.msg import ObjectState
+from chai_msg.msg import ObjectState, WorldState, WorldCmd
 import threading
 from geometry_msgs.msg import WrenchStamped
 from chai_object import Object
+from chai_world import World
 
 
 class ChaiClient:
@@ -17,6 +18,7 @@ class ChaiClient:
         self.m_sub_thread = []
         self.m_pub_thread = []
         self.m_rate = 0
+        self.m_world_name = ''
         pass
 
     def create_objs_from_rostopics(self):
@@ -33,13 +35,18 @@ class ChaiClient:
                         # Searching the active topics between the end of prefix:/chai/env/ and start of /State
                         obj_name = self.m_ros_topics[i][j][
                                      prefix_ind + len(self.m_search_prefix_str):search_ind]
-                        obj = Object(obj_name)
-                        obj.m_sub = rospy.Subscriber(self.m_ros_topics[i][j],
-                                                     ObjectState,
-                                                     obj.ros_cb)
+                        if obj_name == 'World' or obj_name == 'world':
+                            self.m_world_name = obj_name
+                            obj = World(obj_name, self.m_objects_dict)
+                            obj.m_sub = rospy.Subscriber(self.m_ros_topics[i][j], WorldState, obj.ros_cb)
+                            pub_topic_str = self.m_search_prefix_str + obj.m_name + self.m_string_cmd
+                            obj.m_pub = rospy.Publisher(name=pub_topic_str, data_class=WorldCmd, queue_size=10)
+                        else:
+                            obj = Object(obj_name)
+                            obj.m_sub = rospy.Subscriber(self.m_ros_topics[i][j], ObjectState, obj.ros_cb)
+                            pub_topic_str = self.m_search_prefix_str + obj.m_name + self.m_string_cmd
+                            obj.m_pub = rospy.Publisher(name=pub_topic_str, data_class=WrenchStamped, queue_size=10)
 
-                        pub_topic_str = self.m_search_prefix_str + obj.m_name + self.m_string_cmd
-                        obj.m_pub = rospy.Publisher(name=pub_topic_str, data_class=WrenchStamped, queue_size=10)
                         self.m_objects_dict[obj_name] = obj
 
     def start(self):
@@ -55,6 +62,12 @@ class ChaiClient:
             return obj.m_pose
         else:
             return None
+
+    def enable_throttling(self, data):
+        if self.m_world_name:
+            self.m_objects_dict[self.m_world_name].enable_throttling(data)
+        else:
+            raise Exception
 
     def set_obj_cmd(self, a_name, fx, fy, fz, nx, ny, nz):
         obj = self.m_objects_dict.get(a_name)
