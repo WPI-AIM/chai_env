@@ -28,8 +28,8 @@ class ChaiEnv():
         self.m_chai_client.start()
 
         self.m_obs = Observation()
-        input = np.array([ 30, 30, 30, 2, 2, 2])
-        self.action_space = spaces.Box(-input, input)
+        self.action_lims = np.array([30, 30, 30, 2, 2, 2])
+        self.action_space = spaces.Box(-self.action_lims, self.action_lims)
         self.observation_space = spaces.Box(-np.inf, np.inf, shape=(6,))
 
         self.m_Base = self.m_chai_client.get_obj_handle('Base')
@@ -43,12 +43,17 @@ class ChaiEnv():
             raise Exception
 
     def reset(self):
-        action = [0.0,0.0,0.0,0.0,0.0,0.0]
+        action = [0.0,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0]
         return self.step(action)[0]
 
     def step(self, action):
-        # action[0:3] = np.clip(action[0:3], -10, 10)
-        # action[3:6] = np.clip(action[3:6], -2, 2)
+        action[0:3] = np.clip(action[0:3], -self.action_lims[0:3], self.action_lims[0:3])
+        action[3:6] = np.clip(action[3:6], -self.action_lims[3:6], self.action_lims[3:6])
         assert len(action) == 6
         self.m_obj_handle.command(action[0],
                                   action[1],

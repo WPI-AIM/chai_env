@@ -38,7 +38,6 @@ void ObjectRosCom::wrench_sub_cb(geometry_msgs::WrenchStampedConstPtr msg){
 }
 
 void ObjectRosCom::run_publishers(){
-    std::cerr << "Here" << std::endl;
     while(nodePtr->ok()){
         obj_state_pub.publish(m_objectState);
         custom_queue.callAvailable();
