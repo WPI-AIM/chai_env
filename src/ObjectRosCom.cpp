@@ -14,7 +14,7 @@ ObjectRosCom::ObjectRosCom( std::string a_name, int a_freq){
 
     chai_namespace = "chai/env";
     obj_state_pub = nodePtr->advertise<chai_msgs::ObjectState>("/" + chai_namespace + "/" + a_name + "/State", 10);
-    obj_wrench_sub = nodePtr->subscribe("/" + chai_namespace + "/" + a_name + "/Command", 10, &ObjectRosCom::wrench_sub_cb, this);
+    obj_wrench_sub = nodePtr->subscribe("/" + chai_namespace + "/" + a_name + "/Command", 10, &ObjectRosCom::cmd_sub_cb, this);
 
     m_thread = boost::thread(boost::bind(&ObjectRosCom::run_publishers, this));
     std::cerr << "Thread Joined: " << a_name << std::endl;
@@ -26,14 +26,20 @@ ObjectRosCom::~ObjectRosCom(){
     std::cerr << "Thread ShutDown: " << m_objectState.name.data << std::endl;
 }
 
-void ObjectRosCom::wrench_sub_cb(geometry_msgs::WrenchStampedConstPtr msg){
-    m_wrenchStamped_Cmd = *msg;
-    m_wrenchCmd.Fx = m_wrenchStamped_Cmd.wrench.force.x;
-    m_wrenchCmd.Fy = m_wrenchStamped_Cmd.wrench.force.y;
-    m_wrenchCmd.Fz = m_wrenchStamped_Cmd.wrench.force.z;
-    m_wrenchCmd.Nx = m_wrenchStamped_Cmd.wrench.torque.x;
-    m_wrenchCmd.Ny = m_wrenchStamped_Cmd.wrench.torque.y;
-    m_wrenchCmd.Nz = m_wrenchStamped_Cmd.wrench.torque.z;
+void ObjectRosCom::reset_cmd(){
+    m_objectCmd.wrench.force.x = 0;
+    m_objectCmd.wrench.force.y = 0;
+    m_objectCmd.wrench.force.y = 0;
+    m_objectCmd.wrench.torque.x = 0;
+    m_objectCmd.wrench.torque.y = 0;
+    m_objectCmd.wrench.torque.y = 0;
+    m_objectCmd.joint_cmds[0] = 0;
+    m_objectCmd.joint_cmds[1] = 0;
+    m_objectCmd.joint_cmds[2] = 0;
+}
+
+void ObjectRosCom::cmd_sub_cb(chai_msgs::ObjectCmdConstPtr msg){
+    m_objectCmd = *msg;
     m_wd.acknowledge_wd();
 }
 
@@ -42,7 +48,7 @@ void ObjectRosCom::run_publishers(){
         obj_state_pub.publish(m_objectState);
         custom_queue.callAvailable();
         if(m_wd.is_wd_expired()){
-           m_wrenchCmd.clear_wrench();
+            reset_cmd();
         }
         ratePtr->sleep();
     }

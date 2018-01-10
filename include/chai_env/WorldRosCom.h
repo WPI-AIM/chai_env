@@ -39,6 +39,7 @@ protected:
     bool m_enableSimThrottle;
     bool m_stepSim;
 
+    void reset_cmd();
     void world_sub_cb(chai_msgs::WorldCmdConstPtr msg);
 };
 

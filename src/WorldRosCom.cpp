@@ -28,6 +28,11 @@ WorldRosCom::~WorldRosCom(){
     std::cerr << "Thread Shutdown: " << m_name << std::endl;
 }
 
+void WorldRosCom::reset_cmd(){
+    m_enableSimThrottle = false;
+    m_stepSim = true;
+}
+
 void WorldRosCom::world_sub_cb(chai_msgs::WorldCmdConstPtr msg){
     m_worldCmdPrev = m_worldCmd;
     m_worldCmd = *msg;
@@ -48,8 +53,7 @@ void WorldRosCom::run_publishers(){
         world_state_pub.publish(m_worldState);
         custom_queue.callAvailable();
         if(m_wd.is_wd_expired()){
-           m_enableSimThrottle = false;
-           m_stepSim = true;
+            reset_cmd();
         }
         ratePtr->sleep();
     }

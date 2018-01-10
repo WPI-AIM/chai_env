@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import rospy
-from chai_msgs.msg import ObjectState, WorldState, WorldCmd
+from chai_msgs.msg import ObjectState, ObjectCmd, WorldState, WorldCmd
 import threading
 from geometry_msgs.msg import WrenchStamped
 from chai_object import Object
@@ -45,7 +45,7 @@ class ChaiClient:
                             obj = Object(obj_name)
                             obj.m_sub = rospy.Subscriber(self.m_ros_topics[i][j], ObjectState, obj.ros_cb)
                             pub_topic_str = self.m_search_prefix_str + obj.m_name + self.m_string_cmd
-                            obj.m_pub = rospy.Publisher(name=pub_topic_str, data_class=WrenchStamped, queue_size=10)
+                            obj.m_pub = rospy.Publisher(name=pub_topic_str, data_class=ObjectCmd, queue_size=10)
 
                         self.m_objects_dict[obj_name] = obj
 

@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 from tf import transformations
-from geometry_msgs.msg import WrenchStamped, Pose
+from geometry_msgs.msg import Pose
+from chai_msgs.msg import ObjectCmd
 from watch_dog import WatchDog
 import rospy
 
@@ -13,7 +14,7 @@ class Object(WatchDog):
         self.m_sim_step_prev = 0
         self.m_name = a_name
         self.m_pose = Pose()
-        self.m_cmd = WrenchStamped()
+        self.m_cmd = ObjectCmd()
         self.m_pub = None
         self.m_sub = None
         self.m_pub_flag = True
@@ -21,17 +22,20 @@ class Object(WatchDog):
 
     def ros_cb(self, data):
         self.m_name = data.name.data
-        self.m_pose = data.pose_cur
+        self.m_pose = data.pose
         self.m_time_stamp = data.header.stamp
         self.m_sim_step = data.sim_step
 
-    def command(self, fx, fy, fz, nx, ny, nz):
+    def command(self, fx, fy, fz, nx, ny, nz, t1=0, t2=0, t3=0):
         self.m_cmd.wrench.force.x = fx
         self.m_cmd.wrench.force.y = fy
         self.m_cmd.wrench.force.z = fz
         self.m_cmd.wrench.torque.x = nx
         self.m_cmd.wrench.torque.x = ny
         self.m_cmd.wrench.torque.x = nz
+        self.m_cmd.joint_cmds[0] = t1
+        self.m_cmd.joint_cmds[1] = t2
+        self.m_cmd.joint_cmds[2] = t3
         self.m_cmd.header.stamp = rospy.Time.now()
         self.m_sim_step_prev = self.m_sim_step
         self.m_step = True
