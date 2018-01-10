@@ -6,10 +6,6 @@ public:
     CmdWatchDog(double time_out = 0.1){
         m_expire_duration.fromSec(time_out);
     }
-    ~CmdWatchDog(){
-        ros::shutdown();
-    }
-
     void acknowledge_wd(){
         m_next_cmd_expected_time= ros::Time::now() + m_expire_duration;
     }
