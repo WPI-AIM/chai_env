@@ -17,13 +17,13 @@ void World::set_chai_sim_time(double a_sec){
 
 void World::increment_sim_step(){
     if(m_enableSimThrottle){
-        m_pauseSim = true;
+        m_stepSim = false;
     }
     m_worldState.sim_step++;
 }
 
-bool World::pauseSim(){
-    return m_pauseSim;
+bool World::step_sim(){
+    return m_stepSim;
 }
 
 extern "C"{
