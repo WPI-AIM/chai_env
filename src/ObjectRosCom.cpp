@@ -13,7 +13,7 @@ ObjectRosCom::ObjectRosCom( std::string a_name, int a_freq){
     nodePtr->setCallbackQueue(&custom_queue);
 
     chai_namespace = "chai/env";
-    obj_state_pub = nodePtr->advertise<chai_msg::ObjectState>("/" + chai_namespace + "/" + a_name + "/State", 10);
+    obj_state_pub = nodePtr->advertise<chai_msgs::ObjectState>("/" + chai_namespace + "/" + a_name + "/State", 10);
     obj_wrench_sub = nodePtr->subscribe("/" + chai_namespace + "/" + a_name + "/Command", 10, &ObjectRosCom::wrench_sub_cb, this);
 
     m_thread = boost::thread(boost::bind(&ObjectRosCom::run_publishers, this));

@@ -4,7 +4,7 @@
 #include <ros/ros.h>
 #include <boost/thread.hpp>
 #include <geometry_msgs/WrenchStamped.h>
-#include <chai_msg/ObjectState.h>
+#include <chai_msgs/ObjectState.h>
 #include <tf/tf.h>
 #include <tf/LinearMath/Transform.h>
 #include <ros/callback_queue.h>
@@ -46,7 +46,7 @@ protected:
 
     tf::Transform m_trans;
     geometry_msgs::WrenchStamped m_wrenchStamped_Cmd;
-    chai_msg::ObjectState m_objectState;
+    chai_msgs::ObjectState m_objectState;
 
     boost::thread m_thread;
     ros::CallbackQueue custom_queue;

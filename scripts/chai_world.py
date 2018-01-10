@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from chai_msg.msg import WorldState, WorldCmd
+from chai_msgs.msg import WorldState, WorldCmd
 from watch_dog import WatchDog
 
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import rospy
-from chai_msg.msg import ObjectState, WorldState, WorldCmd
+from chai_msgs.msg import ObjectState, WorldState, WorldCmd
 import threading
 from geometry_msgs.msg import WrenchStamped
 from chai_object import Object

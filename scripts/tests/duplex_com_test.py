@@ -1,4 +1,4 @@
-from chai_msg.msg import WorldCmd, WorldState
+from chai_msgs.msg import WorldCmd, WorldState
 import rospy
 
 cmd = WorldCmd()

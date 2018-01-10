@@ -3,8 +3,8 @@
 
 #include <ros/ros.h>
 #include <boost/thread.hpp>
-#include <chai_msg/WorldState.h>
-#include <chai_msg/WorldCmd.h>
+#include <chai_msgs/WorldState.h>
+#include <chai_msgs/WorldCmd.h>
 #include <tf/tf.h>
 #include <tf/LinearMath/Transform.h>
 #include <ros/callback_queue.h>
@@ -29,9 +29,9 @@ protected:
     ros::Publisher world_state_pub;
     ros::Subscriber world_state_sub;
 
-    chai_msg::WorldState m_worldState;
-    chai_msg::WorldCmd m_worldCmd;
-    chai_msg::WorldCmd m_worldCmdPrev;
+    chai_msgs::WorldState m_worldState;
+    chai_msgs::WorldCmd m_worldCmd;
+    chai_msgs::WorldCmd m_worldCmdPrev;
 
     boost::thread m_thread;
     ros::CallbackQueue custom_queue;
@@ -39,7 +39,7 @@ protected:
     bool m_enableSimThrottle;
     bool m_stepSim;
 
-    void world_sub_cb(chai_msg::WorldCmdConstPtr msg);
+    void world_sub_cb(chai_msgs::WorldCmdConstPtr msg);
 };
 
 

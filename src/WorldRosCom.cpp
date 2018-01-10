@@ -15,7 +15,7 @@ WorldRosCom::WorldRosCom( std::string a_name, int a_freq){
     nodePtr->setCallbackQueue(&custom_queue);
 
     chai_namespace = "chai/env";
-    world_state_pub = nodePtr->advertise<chai_msg::WorldState>("/" + chai_namespace + "/" + a_name + "/State", 10);
+    world_state_pub = nodePtr->advertise<chai_msgs::WorldState>("/" + chai_namespace + "/" + a_name + "/State", 10);
     world_state_sub = nodePtr->subscribe("/" + chai_namespace + "/" + a_name + "/Command", 10, &WorldRosCom::world_sub_cb, this);
 
     m_thread = boost::thread(boost::bind(&WorldRosCom::run_publishers, this));
@@ -28,7 +28,7 @@ WorldRosCom::~WorldRosCom(){
     std::cerr << "Thread Shutdown: " << m_name << std::endl;
 }
 
-void WorldRosCom::world_sub_cb(chai_msg::WorldCmdConstPtr msg){
+void WorldRosCom::world_sub_cb(chai_msgs::WorldCmdConstPtr msg){
     m_worldCmdPrev = m_worldCmd;
     m_worldCmd = *msg;
     m_enableSimThrottle = (bool)m_worldCmd.enable_step_throttling;

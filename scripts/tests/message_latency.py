@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import rospy
-from chai_msg.msg import ObjectState
+from chai_msgs.msg import ObjectState
 import matplotlib.pyplot as plt
 
 
