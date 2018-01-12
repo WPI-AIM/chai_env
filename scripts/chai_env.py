@@ -21,6 +21,7 @@ class Observation:
 class ChaiEnv:
     def __init__(self):
         self.obj_handle = []
+        self.world_handle = []
 
         self.chai_client = ChaiClient()
         self.chai_client.create_objs_from_rostopics()
@@ -38,7 +39,8 @@ class ChaiEnv:
 
     def make(self, a_name):
         self.obj_handle = self.chai_client.get_obj_handle(a_name)
-        self.chai_client.enable_throttling(self.enable_step_throttling)
+        self.world_handle = self.chai_client.get_obj_handle('World')
+        self.world_handle.enable_throttling(self.enable_step_throttling)
         if self.obj_handle is None:
             raise Exception
 
@@ -61,7 +63,7 @@ class ChaiEnv:
                                   action[3],
                                   action[4],
                                   action[5])
-        self.obj_handle.set_sim_step_flag()
+        self.world_handle.update()
         self.update_observation()
         return self.obs.cur_observation()
 

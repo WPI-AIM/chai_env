@@ -63,12 +63,6 @@ class ChaiClient:
         else:
             return None
 
-    def enable_throttling(self, data):
-        if self.world_name:
-            self.objects_dict[self.world_name].enable_throttling(data)
-        else:
-            raise Exception
-
     def set_obj_cmd(self, a_name, fx, fy, fz, nx, ny, nz):
         obj = self.objects_dict.get(a_name)
         obj.command(fx, fy, fz, nx, ny, nz)
