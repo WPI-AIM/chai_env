@@ -3,6 +3,7 @@ from chai_client import ChaiClient
 from gym import spaces
 import numpy as np
 import math
+import time
 
 
 class Observation:
@@ -25,7 +26,7 @@ class ChaiEnv:
         self.chai_client.create_objs_from_rostopics()
         # self.chai_client.print_summary()
         self.chai_client.start()
-
+        self.enable_step_throttling = True
         self.obs = Observation()
         self.action_lims = np.array([30, 30, 30, 2, 2, 2])
         self.action_space = spaces.Box(-self.action_lims, self.action_lims)
@@ -37,7 +38,7 @@ class ChaiEnv:
 
     def make(self, a_name):
         self.obj_handle = self.chai_client.get_obj_handle(a_name)
-        self.chai_client.enable_throttling(True)
+        self.chai_client.enable_throttling(self.enable_step_throttling)
         if self.obj_handle is None:
             raise Exception
 
@@ -68,6 +69,14 @@ class ChaiEnv:
         print ' I am a {} POTATO'.format(mode)
 
     def update_observation(self):
+        if self.enable_step_throttling:
+            step_jump = 0
+            while not step_jump > 0:
+                step_jump = self.obj_handle.get_cur_sim_step() > self.obj_handle.get_pre_update_sim_step()
+                time.sleep(0.001)
+            if step_jump > 1:
+                print 'WARN: {} steps jumped'.format(step_jump)
+
         state = self.obj_handle.get_pose()
         self.obs.state = state
         self.obs.reward = self.calculate_reward(state)

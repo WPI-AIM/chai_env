@@ -4,15 +4,14 @@ from geometry_msgs.msg import Pose
 from chai_msgs.msg import ObjectCmd
 from watch_dog import WatchDog
 import rospy
-import time
 
 
 class Object(WatchDog):
     def __init__(self, a_name):
         super(Object, self).__init__()
         self.time_stamp = []
-        self.sim_step = 0
-        self.sim_step_prev = 0
+        self.sim_step_cur = 0
+        self.sim_step_pre_update = 0
         self.name = a_name
         self.pose = Pose()
         self.cmd = ObjectCmd()
@@ -20,16 +19,12 @@ class Object(WatchDog):
         self.sub = None
         self.pub_flag = True
         self.step_sim_flag = False
-        self.throttling_enabled = False
-
-    def enable_throttling(self, data):
-        self.throttling_enabled = True
 
     def ros_cb(self, data):
         self.name = data.name.data
         self.pose = data.pose
         self.time_stamp = data.header.stamp
-        self.sim_step = data.sim_step
+        self.sim_step_cur = data.sim_step
 
     def command(self, fx, fy, fz, nx, ny, nz, t1=0, t2=0, t3=0):
         self.cmd.wrench.force.x = fx
@@ -46,7 +41,16 @@ class Object(WatchDog):
 
     def set_sim_step_flag(self):
         self.step_sim_flag = True
-        self.sim_step_prev = self.sim_step
+        self.sim_step_pre_update = self.sim_step_cur
+
+    def get_sim_step_flag(self):
+        return self.step_sim_flag
+
+    def get_cur_sim_step(self):
+        return self.sim_step_cur
+
+    def get_pre_update_sim_step(self):
+        return self.sim_step_pre_update
 
     def clear_cmd(self):
         self.cmd.wrench.force.x = 0
@@ -57,13 +61,6 @@ class Object(WatchDog):
         self.cmd.wrench.torque.x = 0
 
     def get_pose(self):
-        if self.throttling_enabled:
-            while not self.sim_step > self.sim_step_prev:
-                time.sleep(0.001)
-
-        step_jump = self.sim_step - self.sim_step_prev
-        if step_jump > 1:
-            print 'WARN: {} steps jumped'.format(step_jump)
         quat = self.pose.orientation
         explicit_quat = [quat.x, quat.y, quat.z, quat.w]
         rpy = transformations.euler_from_quaternion(explicit_quat, 'szyx')
