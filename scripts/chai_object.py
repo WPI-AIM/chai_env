@@ -20,6 +20,10 @@ class Object(WatchDog):
         self.sub = None
         self.pub_flag = True
         self.step_sim_flag = False
+        self.throttling_enabled = False
+
+    def enable_throttling(self, data):
+        self.throttling_enabled = True
 
     def ros_cb(self, data):
         self.name = data.name.data
@@ -53,8 +57,9 @@ class Object(WatchDog):
         self.cmd.wrench.torque.x = 0
 
     def get_pose(self):
-        while not self.sim_step > self.sim_step_prev:
-            time.sleep(0.001)
+        if self.throttling_enabled:
+            while not self.sim_step > self.sim_step_prev:
+                time.sleep(0.001)
 
         step_jump = self.sim_step - self.sim_step_prev
         if step_jump > 1:

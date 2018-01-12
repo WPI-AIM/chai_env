@@ -7,7 +7,6 @@ sim_step = 0
 sim_step_prev = 0
 
 
-
 def cb(data):
     global sim_step, sim_step_prev
     sim_step_prev = sim_step

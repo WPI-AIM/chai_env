@@ -17,7 +17,7 @@ class Observation:
         return np.array(self.state), self.reward, self.is_done, self.info
 
 
-class ChaiEnv():
+class ChaiEnv:
     def __init__(self):
         self.obj_handle = []
 
