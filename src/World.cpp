@@ -2,7 +2,8 @@
 
 namespace chai_env{
 World::World(std::string a_name): WorldRosCom(a_name){
-
+    n_skip_steps = 10;
+    skip_steps_ctr = 0;
 }
 
 void World::set_chai_wall_time(double a_sec){
@@ -17,7 +18,14 @@ void World::set_chai_sim_time(double a_sec){
 
 void World::increment_sim_step(){
     if(m_enableSimThrottle){
-        m_stepSim = false;
+        skip_steps_ctr++;
+        if (skip_steps_ctr == n_skip_steps){
+            m_stepSim = false;
+            skip_steps_ctr = 0;
+        }
+        if (skip_steps_ctr > n_skip_steps){
+            std::cerr << "WARN, Skipped " << skip_steps_ctr << " steps, Default skip limit " << n_skip_steps << std::endl;
+        }
     }
     m_worldState.sim_step++;
 }

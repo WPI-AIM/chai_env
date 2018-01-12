@@ -26,6 +26,7 @@ class ChaiEnv:
         self.chai_client = ChaiClient()
         self.chai_client.create_objs_from_rostopics()
         # self.chai_client.print_summary()
+        self.n_skip_steps = 10
         self.chai_client.start()
         self.enable_step_throttling = True
         self.obs = Observation()
@@ -73,11 +74,11 @@ class ChaiEnv:
     def update_observation(self):
         if self.enable_step_throttling:
             step_jump = 0
-            while not step_jump > 0:
+            while not step_jump >= self.n_skip_steps:
                 step_jump = self.obj_handle.get_cur_sim_step() - self.obj_handle.get_pre_update_sim_step()
                 time.sleep(0.001)
-            if step_jump > 1:
-                print 'WARN: {} steps jumped'.format(step_jump)
+            if step_jump > self.n_skip_steps:
+                print 'WARN: Jumped {} steps, Default skip limit {} Steps'.format(step_jump, self.n_skip_steps)
 
         state = self.obj_handle.get_pose()
         self.obs.state = state
