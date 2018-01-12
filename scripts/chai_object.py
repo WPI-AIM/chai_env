@@ -4,6 +4,7 @@ from geometry_msgs.msg import Pose
 from chai_msgs.msg import ObjectCmd
 from watch_dog import WatchDog
 import rospy
+import time
 
 
 class Object(WatchDog):
@@ -52,8 +53,8 @@ class Object(WatchDog):
         self.cmd.wrench.torque.x = 0
 
     def get_pose(self):
-        if not self.sim_step > self.sim_step_prev:
-            return 0
+        while not self.sim_step > self.sim_step_prev:
+            time.sleep(0.001)
 
         step_jump = self.sim_step - self.sim_step_prev
         if step_jump > 1:

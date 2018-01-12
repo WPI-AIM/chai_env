@@ -1,8 +1,7 @@
 #!/usr/bin/env python
-from chai_client import ChaiClient, Object
+from chai_client import ChaiClient
 from gym import spaces
 import numpy as np
-import time
 import math
 
 
@@ -69,11 +68,7 @@ class ChaiEnv():
         print ' I am a {} POTATO'.format(mode)
 
     def update_observation(self):
-        state = 0
-        while state == 0:
-            time.sleep(0.0005)
-            state = self.obj_handle.get_pose()
-
+        state = self.obj_handle.get_pose()
         self.obs.state = state
         self.obs.reward = self.calculate_reward(state)
         self.obs.is_done = self.check_if_done()
