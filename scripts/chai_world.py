@@ -28,9 +28,9 @@ class World(WatchDog):
                 if key == 'World' or key == 'world':
                     pass
                 else:
-                    if obj.m_step is True:
+                    if obj.m_step_flag is True:
                         step = True
-                        obj.m_step = False
+                        obj.m_step_flag = False
         if step is True:
             self.m_cmd.step = not self.m_cmd.step
         self.acknowledge_wd()

@@ -61,6 +61,7 @@ class ChaiEnv():
                                   action[3],
                                   action[4],
                                   action[5])
+        self.m_obj_handle.set_sim_step_flag()
         time.sleep(0.005)
         self.update_observation()
         return self.m_obs.cur_observation()
