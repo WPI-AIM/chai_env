@@ -62,7 +62,6 @@ class ChaiEnv():
                                   action[4],
                                   action[5])
         self.m_obj_handle.set_sim_step_flag()
-        time.sleep(0.005)
         self.update_observation()
         return self.m_obs.cur_observation()
 
@@ -72,6 +71,7 @@ class ChaiEnv():
     def update_observation(self):
         state = 0
         while state == 0:
+            time.sleep(0.0005)
             state = self.m_obj_handle.get_pose()
 
         self.m_obs.state = state

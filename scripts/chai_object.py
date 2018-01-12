@@ -18,7 +18,7 @@ class Object(WatchDog):
         self.m_pub = None
         self.m_sub = None
         self.m_pub_flag = True
-        self.m_step_flag = False
+        self.m_step_sim_flag = False
 
     def ros_cb(self, data):
         self.m_name = data.name.data
@@ -37,11 +37,11 @@ class Object(WatchDog):
         self.m_cmd.joint_cmds[1] = t2
         self.m_cmd.joint_cmds[2] = t3
         self.m_cmd.header.stamp = rospy.Time.now()
-        self.m_sim_step_prev = self.m_sim_step
         self.acknowledge_wd()
 
     def set_sim_step_flag(self):
-        self.m_step_flag = True
+        self.m_step_sim_flag = True
+        self.m_sim_step_prev = self.m_sim_step
 
     def clear_cmd(self):
         self.m_cmd.wrench.force.x = 0
