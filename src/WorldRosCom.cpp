@@ -39,7 +39,7 @@ void WorldRosCom::world_sub_cb(chai_msgs::WorldCmdConstPtr msg){
     m_enableSimThrottle = (bool)m_worldCmd.enable_step_throttling;
     if (m_enableSimThrottle){
         if(!m_stepSim){
-            m_stepSim = (bool)m_worldCmd.step ^ (bool)m_worldCmdPrev.step;
+            m_stepSim = (bool)m_worldCmd.step_clock ^ (bool)m_worldCmdPrev.step_clock;
         }
     }
     else{

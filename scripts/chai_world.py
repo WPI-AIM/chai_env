@@ -22,7 +22,7 @@ class World(WatchDog):
         self.state = data
 
     def update(self):
-        self.cmd.step = not self.cmd.step
+        self.cmd.step_clock = not self.cmd.step_clock
         self.acknowledge_wd()
 
     def clear_cmd(self):
