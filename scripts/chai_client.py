@@ -9,83 +9,83 @@ from chai_world import World
 
 class ChaiClient:
     def __init__(self):
-        self.m_ros_topics = []
-        self.m_search_prefix_str = '/chai/env/'
-        self.m_search_suffix_str = '/State'
-        self.m_string_cmd = '/Command'
-        self.m_sub_list = []
-        self.m_objects_dict = {}
-        self.m_sub_thread = []
-        self.m_pub_thread = []
-        self.m_rate = 0
-        self.m_world_name = ''
+        self.ros_topics = []
+        self.search_prefix_str = '/chai/env/'
+        self.search_suffix_str = '/State'
+        self.string_cmd = '/Command'
+        self.sub_list = []
+        self.objects_dict = {}
+        self.sub_thread = []
+        self.pub_thread = []
+        self.rate = 0
+        self.world_name = ''
         pass
 
     def create_objs_from_rostopics(self):
         rospy.init_node('chai_client')
         rospy.on_shutdown(self.clean_up)
-        self.m_rate = rospy.Rate(3000)
-        self.m_ros_topics = rospy.get_published_topics()
-        for i in range(len(self.m_ros_topics)):
-            for j in range(len(self.m_ros_topics[i])):
-                prefix_ind = self.m_ros_topics[i][j].find(self.m_search_prefix_str)
+        self.rate = rospy.Rate(3000)
+        self.ros_topics = rospy.get_published_topics()
+        for i in range(len(self.ros_topics)):
+            for j in range(len(self.ros_topics[i])):
+                prefix_ind = self.ros_topics[i][j].find(self.search_prefix_str)
                 if prefix_ind >= 0:
-                    search_ind = self.m_ros_topics[i][j].find(self.m_search_suffix_str)
+                    search_ind = self.ros_topics[i][j].find(self.search_suffix_str)
                     if search_ind >= 0:
                         # Searching the active topics between the end of prefix:/chai/env/ and start of /State
-                        obj_name = self.m_ros_topics[i][j][
-                                     prefix_ind + len(self.m_search_prefix_str):search_ind]
+                        obj_name = self.ros_topics[i][j][
+                                     prefix_ind + len(self.search_prefix_str):search_ind]
                         if obj_name == 'World' or obj_name == 'world':
-                            self.m_world_name = obj_name
-                            obj = World(obj_name, self.m_objects_dict)
-                            obj.m_sub = rospy.Subscriber(self.m_ros_topics[i][j], WorldState, obj.ros_cb)
-                            pub_topic_str = self.m_search_prefix_str + obj.m_name + self.m_string_cmd
-                            obj.m_pub = rospy.Publisher(name=pub_topic_str, data_class=WorldCmd, queue_size=10)
+                            self.world_name = obj_name
+                            obj = World(obj_name, self.objects_dict)
+                            obj.sub = rospy.Subscriber(self.ros_topics[i][j], WorldState, obj.ros_cb)
+                            pub_topic_str = self.search_prefix_str + obj.name + self.string_cmd
+                            obj.pub = rospy.Publisher(name=pub_topic_str, data_class=WorldCmd, queue_size=10)
                         else:
                             obj = Object(obj_name)
-                            obj.m_sub = rospy.Subscriber(self.m_ros_topics[i][j], ObjectState, obj.ros_cb)
-                            pub_topic_str = self.m_search_prefix_str + obj.m_name + self.m_string_cmd
-                            obj.m_pub = rospy.Publisher(name=pub_topic_str, data_class=ObjectCmd, queue_size=10)
+                            obj.sub = rospy.Subscriber(self.ros_topics[i][j], ObjectState, obj.ros_cb)
+                            pub_topic_str = self.search_prefix_str + obj.name + self.string_cmd
+                            obj.pub = rospy.Publisher(name=pub_topic_str, data_class=ObjectCmd, queue_size=10)
 
-                        self.m_objects_dict[obj_name] = obj
+                        self.objects_dict[obj_name] = obj
 
     def start(self):
         self.start_pubs()
 
     def get_obj_handle(self, a_name):
-        obj = self.m_objects_dict.get(a_name)
+        obj = self.objects_dict.get(a_name)
         return obj
 
     def get_obj_pose(self, a_name):
-        obj = self.m_objects_dict.get(a_name)
+        obj = self.objects_dict.get(a_name)
         if obj is not None:
-            return obj.m_pose
+            return obj.pose
         else:
             return None
 
     def enable_throttling(self, data):
-        if self.m_world_name:
-            self.m_objects_dict[self.m_world_name].enable_throttling(data)
+        if self.world_name:
+            self.objects_dict[self.world_name].enable_throttling(data)
         else:
             raise Exception
 
     def set_obj_cmd(self, a_name, fx, fy, fz, nx, ny, nz):
-        obj = self.m_objects_dict.get(a_name)
+        obj = self.objects_dict.get(a_name)
         obj.command(fx, fy, fz, nx, ny, nz)
 
     def start_pubs(self):
-        self.m_pub_thread = threading.Thread(target=self.run_obj_publishers)
-        self.m_pub_thread.daemon = True
-        self.m_pub_thread.start()
+        self.pub_thread = threading.Thread(target=self.run_obj_publishers)
+        self.pub_thread.daemon = True
+        self.pub_thread.start()
 
     def run_obj_publishers(self):
         while not rospy.is_shutdown():
-            for key, obj in self.m_objects_dict.items():
+            for key, obj in self.objects_dict.items():
                 obj.run_publisher()
-            self.m_rate.sleep()
+            self.rate.sleep()
 
     def print_active_topics(self):
-        print self.m_ros_topics
+        print self.ros_topics
         pass
 
     def print_summary(self):
@@ -93,15 +93,15 @@ class ChaiClient:
         print '---------------------------------------------------------'
         print 'CLIENT FOR CREATING OBJECTS FROM ROSTOPICS'
         print 'Searching Object names from ros topics with'
-        print 'Prefix: ', self.m_search_prefix_str
-        print 'Suffix: ', self.m_search_suffix_str
-        print 'Number of OBJECTS found', len(self.m_objects_dict)
-        for key, value in self.m_objects_dict.items():
+        print 'Prefix: ', self.search_prefix_str
+        print 'Suffix: ', self.search_suffix_str
+        print 'Number of OBJECTS found', len(self.objects_dict)
+        for key, value in self.objects_dict.items():
             print key
         print '---------------------------------------------------------'
 
     def clean_up(self):
-        for key, val in self.m_objects_dict.iteritems():
-            val.m_pub_flag = False
+        for key, val in self.objects_dict.iteritems():
+            val.pub_flag = False
             print 'Closing publisher for: ', key
 

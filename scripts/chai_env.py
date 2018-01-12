@@ -12,7 +12,7 @@ class Observation:
         self.reward = 0.0
         self.is_done = False
         self.info = {}
-        self.m_sim_step_no = 0
+        self.sim_step_no = 0
 
     def cur_observation(self):
         return np.array(self.state), self.reward, self.is_done, self.info
@@ -20,26 +20,26 @@ class Observation:
 
 class ChaiEnv():
     def __init__(self):
-        self.m_obj_handle = []
+        self.obj_handle = []
 
-        self.m_chai_client = ChaiClient()
-        self.m_chai_client.create_objs_from_rostopics()
-        # self.m_chai_client.print_summary()
-        self.m_chai_client.start()
+        self.chai_client = ChaiClient()
+        self.chai_client.create_objs_from_rostopics()
+        # self.chai_client.print_summary()
+        self.chai_client.start()
 
-        self.m_obs = Observation()
+        self.obs = Observation()
         self.action_lims = np.array([30, 30, 30, 2, 2, 2])
         self.action_space = spaces.Box(-self.action_lims, self.action_lims)
         self.observation_space = spaces.Box(-np.inf, np.inf, shape=(6,))
 
-        self.m_Base = self.m_chai_client.get_obj_handle('Base')
+        self.Base = self.chai_client.get_obj_handle('Base')
 
         pass
 
     def make(self, a_name):
-        self.m_obj_handle = self.m_chai_client.get_obj_handle(a_name)
-        self.m_chai_client.enable_throttling(True)
-        if self.m_obj_handle is None:
+        self.obj_handle = self.chai_client.get_obj_handle(a_name)
+        self.chai_client.enable_throttling(True)
+        if self.obj_handle is None:
             raise Exception
 
     def reset(self):
@@ -55,15 +55,15 @@ class ChaiEnv():
         action[0:3] = np.clip(action[0:3], -self.action_lims[0:3], self.action_lims[0:3])
         action[3:6] = np.clip(action[3:6], -self.action_lims[3:6], self.action_lims[3:6])
         assert len(action) == 6
-        self.m_obj_handle.command(action[0],
+        self.obj_handle.command(action[0],
                                   action[1],
                                   action[2],
                                   action[3],
                                   action[4],
                                   action[5])
-        self.m_obj_handle.set_sim_step_flag()
+        self.obj_handle.set_sim_step_flag()
         self.update_observation()
-        return self.m_obs.cur_observation()
+        return self.obs.cur_observation()
 
     def render(self, mode):
         print ' I am a {} POTATO'.format(mode)
@@ -72,12 +72,12 @@ class ChaiEnv():
         state = 0
         while state == 0:
             time.sleep(0.0005)
-            state = self.m_obj_handle.get_pose()
+            state = self.obj_handle.get_pose()
 
-        self.m_obs.state = state
-        self.m_obs.reward = self.calculate_reward(state)
-        self.m_obs.is_done = self.check_if_done()
-        self.m_obs.info = self.update_info()
+        self.obs.state = state
+        self.obs.reward = self.calculate_reward(state)
+        self.obs.is_done = self.check_if_done()
+        self.obs.info = self.update_info()
 
     def calculate_reward(self, state):
         cur_pose = state
