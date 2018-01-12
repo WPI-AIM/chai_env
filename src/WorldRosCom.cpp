@@ -54,6 +54,7 @@ void WorldRosCom::run_publishers(){
         world_state_pub.publish(m_worldState);
         custom_queue.callAvailable();
         if(m_wd.is_wd_expired()){
+            m_wd.consolePrint("World");
             reset_cmd();
         }
         ratePtr->sleep();

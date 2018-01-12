@@ -48,6 +48,7 @@ void ObjectRosCom::run_publishers(){
         obj_state_pub.publish(m_objectState);
         custom_queue.callAvailable();
         if(m_wd.is_wd_expired()){
+            m_wd.consolePrint(m_objectState.name.data);
             reset_cmd();
         }
         ratePtr->sleep();
