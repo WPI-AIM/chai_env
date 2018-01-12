@@ -36,6 +36,8 @@ class Object(WatchDog):
         self.cmd.joint_cmds[1] = t2
         self.cmd.joint_cmds[2] = t3
         self.cmd.header.stamp = rospy.Time.now()
+
+        self.sim_step_pre_update = self.sim_step_cur
         self.acknowledge_wd()
 
     def get_cur_sim_step(self):

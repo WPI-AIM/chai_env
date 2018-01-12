@@ -5,7 +5,7 @@ from watch_dog import WatchDog
 
 class World(WatchDog):
     def __init__(self, a_name, a_objects_dict):
-        super(World, self).__init__()
+        super(World, self).__init__(2.0)
         self.state = WorldState()
         self.objects_dict = a_objects_dict
         self.name = a_name
@@ -32,5 +32,6 @@ class World(WatchDog):
     def run_publisher(self):
         if self.pub_flag:
             if self.is_wd_expired():
+                print 'Watch Dog Expired, Clearing World Cmds'
                 self.clear_cmd()
             self.pub.publish(self.cmd)
