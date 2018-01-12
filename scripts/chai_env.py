@@ -4,6 +4,8 @@ from gym import spaces
 import numpy as np
 import math
 import time
+from chai_world import World
+from chai_object import Object
 
 
 class Observation:
@@ -20,13 +22,13 @@ class Observation:
 
 class ChaiEnv:
     def __init__(self):
-        self.obj_handle = []
-        self.world_handle = []
+        self.obj_handle = Object
+        self.world_handle = World
 
         self.chai_client = ChaiClient()
         self.chai_client.create_objs_from_rostopics()
         # self.chai_client.print_summary()
-        self.n_skip_steps = 10
+        self.n_skip_steps = 100
         self.chai_client.start()
         self.enable_step_throttling = True
         self.obs = Observation()
@@ -42,6 +44,7 @@ class ChaiEnv:
         self.obj_handle = self.chai_client.get_obj_handle(a_name)
         self.world_handle = self.chai_client.get_obj_handle('World')
         self.world_handle.enable_throttling(self.enable_step_throttling)
+        self.world_handle.set_num_step_skips(self.n_skip_steps)
         if self.obj_handle is None or self.world_handle is None:
             raise Exception
 

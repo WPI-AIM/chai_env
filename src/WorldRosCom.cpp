@@ -36,6 +36,7 @@ void WorldRosCom::reset_cmd(){
 void WorldRosCom::world_sub_cb(chai_msgs::WorldCmdConstPtr msg){
     m_worldCmdPrev = m_worldCmd;
     m_worldCmd = *msg;
+    m_num_skip_steps = m_worldCmd.n_skip_steps;
     m_enableSimThrottle = (bool)m_worldCmd.enable_step_throttling;
     if (m_enableSimThrottle){
         if(!m_stepSim){

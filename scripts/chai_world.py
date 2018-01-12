@@ -18,6 +18,11 @@ class World(WatchDog):
     def enable_throttling(self, data):
         self.cmd.enable_step_throttling = data
 
+    def set_num_step_skips(self, n):
+        if n <= 0 or n > 100:
+            raise ValueError
+        self.cmd.n_skip_steps = n
+
     def ros_cb(self, data):
         self.state = data
 

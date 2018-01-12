@@ -12,8 +12,6 @@ public:
     void set_chai_sim_time(double a_sec);
     void increment_sim_step();
     bool step_sim();
-    int n_skip_steps;
-    int skip_steps_ctr;
 };
 }
 
