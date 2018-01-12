@@ -37,6 +37,6 @@ class World(WatchDog):
     def run_publisher(self):
         if self.pub_flag:
             if self.is_wd_expired():
-                print 'Watch Dog Expired, Clearing World Cmds'
+                self.console_print('World')
                 self.clear_cmd()
             self.pub.publish(self.cmd)

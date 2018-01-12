@@ -17,3 +17,8 @@ class WatchDog(object):
             return True
         else:
             return False
+
+    def console_print(self, class_name):
+        if self.initialized:
+            print 'Watch Dog Expired, Resetting {} command'.format(class_name)
+            self.initialized = False

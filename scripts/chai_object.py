@@ -69,5 +69,6 @@ class Object(WatchDog):
     def run_publisher(self):
         if self.pub_flag:
             if self.is_wd_expired():
+                self.console_print(self.name)
                 self.clear_cmd()
             self.pub.publish(self.cmd)
