@@ -37,7 +37,7 @@ protected:
     boost::thread m_thread;
     ros::CallbackQueue custom_queue;
 
-    void reset_cmd();
+    inline void reset_cmd();
     void cmd_sub_cb(chai_msgs::ObjectCmdConstPtr msg);
 };
 

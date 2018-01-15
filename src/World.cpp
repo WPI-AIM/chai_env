@@ -30,6 +30,14 @@ void World::increment_sim_step(){
     m_worldState.sim_step++;
 }
 
+void World::set_num_devices(uint a_num){
+    m_worldState.n_devices = a_num;
+}
+
+void World::set_loop_freq(double a_freq){
+    m_worldState.dynamic_loop_freq = a_freq;
+}
+
 bool World::step_sim(){
     return m_stepSim;
 }

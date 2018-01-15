@@ -38,12 +38,12 @@ public:
     void cur_force(double fx, double fy, double fz);
     void cur_torque(double nx, double ny, double nz);
     void update_cmd_from_ros();
-    void set_chai_wall_time(double a_sec);
-    void set_chai_sim_time(double a_sec);
-    void set_mass(double a_mass);
-    void set_principal_intertia(double Ixx, double Iyy, double Izz);
-    void increment_sim_step();
-    void set_sim_step(uint step);
+    inline void set_chai_wall_time(double a_sec);
+    inline void set_chai_sim_time(double a_sec);
+    inline void set_mass(double a_mass);
+    inline void set_principal_intertia(double Ixx, double Iyy, double Izz);
+    inline void increment_sim_step();
+    inline void set_sim_step(uint step);
     Cmd m_cmd;
 };
 }

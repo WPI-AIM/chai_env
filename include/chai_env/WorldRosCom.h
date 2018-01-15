@@ -41,7 +41,7 @@ protected:
     int m_num_skip_steps;
     int m_skip_steps_ctr;
 
-    void reset_cmd();
+    inline void reset_cmd();
     void world_sub_cb(chai_msgs::WorldCmdConstPtr msg);
 };
 

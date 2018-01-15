@@ -9,7 +9,7 @@ project(chai_env)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED
 geometry_msgs
-chai_msg
+chai_msgs
 tf)
 
 ## System dependencies are found with CMake's conventions
