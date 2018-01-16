@@ -38,12 +38,12 @@ public:
     void cur_force(double fx, double fy, double fz);
     void cur_torque(double nx, double ny, double nz);
     void update_cmd_from_ros();
-    inline void set_chai_wall_time(double a_sec);
-    inline void set_chai_sim_time(double a_sec);
-    inline void set_mass(double a_mass);
-    inline void set_principal_intertia(double Ixx, double Iyy, double Izz);
-    inline void increment_sim_step();
-    inline void set_sim_step(uint step);
+    void set_chai_wall_time(double a_sec);
+    inline void set_chai_sim_time(double a_sec){ m_objectState.chai_sim_time = a_sec;}
+    inline void set_mass(double a_mass){m_objectState.mass = a_mass;}
+    inline void set_principal_intertia(double Ixx, double Iyy, double Izz){m_objectState.pInertia.x = Ixx; m_objectState.pInertia.y = Iyy; m_objectState.pInertia.z = Izz;}
+    inline void increment_sim_step(){m_objectState.sim_step++;}
+    inline void set_sim_step(uint step){m_objectState.sim_step = step;}
     Cmd m_cmd;
 };
 }

@@ -44,29 +44,6 @@ void Object::set_chai_wall_time(double a_sec){
     m_objectState.header.stamp = ros::Time::now();
 }
 
-void Object::set_chai_sim_time(double a_sec){
-    m_objectState.chai_sim_time = a_sec;
-}
-
-void Object::set_mass(double a_mass){
-    m_objectState.mass = a_mass;
-}
-
-void Object::set_principal_intertia(double Ixx, double Iyy, double Izz){
-    m_objectState.pInertia.x = Ixx;
-    m_objectState.pInertia.y = Iyy;
-    m_objectState.pInertia.z = Izz;
-}
-
-void Object::increment_sim_step(){
-    m_objectState.sim_step++;
-}
-
-void Object::set_sim_step(uint step){
-    m_objectState.sim_step = step;
-}
-
-
 extern "C"{
 
 Object* create_object(std::string name){
