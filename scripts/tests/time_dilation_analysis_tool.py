@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import rospy
-from chai_msgs.msg import ObjectState
+from chai_msgs.msg import WorldState
 import matplotlib.pyplot as plt
 import rospy.rostime as time
 
@@ -55,7 +55,7 @@ class TimeDilationAnalysis:
 
     def run(self):
         rospy.init_node('time_dilation_inspector')
-        sub = rospy.Subscriber('/chai/env/Torus/State', ObjectState, self.obj_state_cb, queue_size=10)
+        sub = rospy.Subscriber('/chai/env/World/State', WorldState, self.obj_state_cb, queue_size=10)
 
         print 'X Axis = ', self.x_axis_dict[self.x_axis_type][0]
         x_axis_indx = self.x_axis_dict[self.x_axis_type][1]

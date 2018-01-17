@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import rospy
-from chai_msgs.msg import ObjectState
+from chai_msgs.msg import WorldState
 import matplotlib.pyplot as plt
 
 
@@ -83,7 +83,7 @@ class MessageLatency:
 
     def run(self):
         rospy.init_node('message_latency_inspector')
-        sub = rospy.Subscriber('/chai/env/Torus/State', ObjectState, self.obj_state_cb, queue_size=self.queue_size)
+        sub = rospy.Subscriber('/chai/env/World/State', WorldState, self.obj_state_cb, queue_size=self.queue_size)
 
         print 'X Axis = ', self.x_axis_dict[self.x_axis_type][0]
         x_axis_indx = self.x_axis_dict[self.x_axis_type][1]
