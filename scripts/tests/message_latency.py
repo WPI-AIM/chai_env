@@ -97,8 +97,7 @@ class MessageLatency:
 
         while not rospy.is_shutdown() and not self.done:
             if len(x_axis_indx) > 0:
-                temp_time = self.chai_process_wall_time[-1]
-                if temp_time > self.time_window_lims[1]:
+                if self.chai_process_wall_time[-1] > self.time_window_lims[1]:
                     self.done = True
                     self.compute_mean_latency()
                     self.dt_cur_wall_times = self.calculate_packets_dt(self.cur_process_wall_time)

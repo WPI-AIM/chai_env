@@ -64,24 +64,27 @@ class TimeDilationAnalysis:
                     ' + ' + self.x_axis_dict[self.x_axis_type][0] + \
                     ' + ' + self.dt_dict[self.dt_type]
         plt.title(title_str)
-        while not rospy.is_shutdown():
+        first = False
+        while not rospy.is_shutdown() and not self.done:
             if len(x_axis_indx) > 0:
+                if self.chai_wall_time[-1] > self.time_window_lims[1]:
+                    self.done = True
+
                 if self.chai_wall_time[-1] <= self.time_window_lims[1]:
                     ct_axes, = plt.plot(x_axis_indx, self.cur_wall_time)
                     wt_axes, = plt.plot(x_axis_indx, self.chai_wall_time)
                     st_axes, = plt.plot(x_axis_indx, self.chai_sim_time)
-                    plt.grid(True)
-                    plt.xlabel(self.x_axis_dict[self.x_axis_type][0])
-                    plt.ylabel('(Time)')
+                    if not first:
+                        first = True
+                        plt.grid(True)
+                        plt.xlabel(self.x_axis_dict[self.x_axis_type][0])
+                        plt.ylabel('(Time)')
+                        plt.legend([ct_axes, wt_axes, st_axes], ['Current Time', 'Chai Wall Time', 'Simulation Time'])
                     plt.setp(ct_axes, color='b', linewidth=1.0, marker='o', markersize=8)
                     plt.setp(wt_axes, color='r', linewidth=1.0, marker='o', markersize=5)
                     plt.setp(st_axes, color='g', linewidth=1.0, marker='o', markersize=2.5)
-                    plt.legend([ct_axes, wt_axes, st_axes], ['Current Time', 'Chai Wall Time', 'Simulation Time'])
                     plt.draw()
                     plt.pause(0.001)
-                if self.chai_wall_time[-1] > self.time_window_lims[1]:
-                    self.done = True
-                    break
         plt.savefig('./graphs/' + title_str + '.png', bbox_inches='tight')
         plt.show()
 
