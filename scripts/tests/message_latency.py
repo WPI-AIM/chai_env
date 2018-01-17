@@ -17,13 +17,16 @@ class MessageLatency:
         self.latency_exceptions = 0
         self.initial_time_offset = 0
         self.mean_latency = 0.0
-        self.time_window_lims = [0.0, 10.0]
+        self.time_window_lims = [0.0, 20.0]
         self.window_times_captured = False
         self.done = False
         self.queue_size = 50
+        self.figure_ctr = 0
+        self.dt_cur_wall_times = []
+        self.dt_chai_wall_times = []
 
         self.x_axis_type = 0  # 0:'Message Num' | 1:'Sim Step Num'    | 2:'Callback Num'
-        self.load_type = 0  # 0:'No Load'     | 1:'Haptic Dev Load' | 2:'Client Load' | 3:'Haptic Dev & Client Load'
+        self.load_type = None  # 0:'No Load'     | 1:'Haptic Dev Load' | 2:'Client Load' | 3:'Haptic Dev & Client Load'
         self.dt_type = 1  # 0:'Dynamic dt'  | 1:'Fixed dt = 0.0005'
 
         self.x_axis_dict = {0: ['Message Num', self.msg_counter_num],
@@ -62,6 +65,10 @@ class MessageLatency:
                 self.msg_counter_num.append(data.header.seq)
                 self.cb_counter_num.append(self.cb_counter)
                 self.cb_counter += 1
+                if data.n_devices > 0:
+                    self.load_type = 1
+                else:
+                    self.load_type = 0
 
     def compute_mean_latency(self):
         self.mean_latency = sum(self.latency_list) / len(self.latency_list)
@@ -92,13 +99,21 @@ class MessageLatency:
             if len(x_axis_indx) > 0:
                 temp_time = self.chai_process_wall_time[-1]
                 if temp_time > self.time_window_lims[1]:
-                    title_str = self.load_dict[self.load_type] +\
-                                '+' + self.x_axis_dict[self.x_axis_type][0] +\
-                                '+' + self.dt_dict[self.dt_type]
                     self.done = True
+                    self.compute_mean_latency()
+                    self.dt_cur_wall_times = self.calculate_packets_dt(self.cur_process_wall_time)
+                    self.dt_chai_wall_times = self.calculate_packets_dt(self.chai_process_wall_time)
+                    for keys, item in self.x_axis_dict.iteritems():
+                        title_str = self.load_dict[self.load_type] +\
+                                    '+' + item[0] +\
+                                    '+' + self.dt_dict[self.dt_type]
+                        x_axis_indx = item[1]
+                        self.generate_graphs(title_str, x_axis_indx)
+                    plt.show()
 
-        self.compute_mean_latency()
-        plt.figure(1)
+    def generate_graphs(self, title_str, x_axis_indx):
+        self.figure_ctr += 1
+        plt.figure(self.figure_ctr)
         plt.subplot(311)
         plt.hist(self.latency_list, bins='auto', stacked=True)
         plt.grid(True)
@@ -116,29 +131,27 @@ class MessageLatency:
         wt, = plt.plot(x_axis_indx, self.chai_process_wall_time, color='g')
         plt.grid(True)
         plt.legend([ct, wt], ['Process Wall Time', 'Chai Wall Time'])
-
-        plt.figure(2)
-
-        dt_cur_wall_times = self.calculate_packets_dt(self.cur_process_wall_time)
-        dt_chai_wall_times = self.calculate_packets_dt(self.chai_process_wall_time)
+        self.save_graph(plt, title_str+'_histogram')
+        self.figure_ctr += 1
+        plt.figure(self.figure_ctr)
 
         plt.subplot(311)
-        cur_dt_axes_1 = plt.scatter(x_axis_indx[0:-2], dt_cur_wall_times, color='r', marker='.', s=5)
+        cur_dt_axes_1 = plt.scatter(x_axis_indx[0:-2], self.dt_cur_wall_times, color='r', marker='.', s=5)
         plt.legend([cur_dt_axes_1], ['Cur Process dt'])
         plt.grid(True)
         plt.subplot(312)
-        chai_dt_axes_1 = plt.scatter(x_axis_indx[0:-2], dt_chai_wall_times, color='g', marker='.', s=5)
+        chai_dt_axes_1 = plt.scatter(x_axis_indx[0:-2], self.dt_chai_wall_times, color='g', marker='.', s=5)
         plt.legend([cur_dt_axes_1], ['Chai Process dt'])
         plt.grid(True)
         plt.subplot(313)
-        cur_dt_axes_2 = plt.scatter(x_axis_indx[0:-2], dt_cur_wall_times, color='r', marker='.', s=5)
-        chai_dt_axes_2 = plt.scatter(x_axis_indx[0:-2], dt_chai_wall_times, color='g', marker='.', s=5)
+        cur_dt_axes_2 = plt.scatter(x_axis_indx[0:-2], self.dt_cur_wall_times, color='r', marker='.', s=5)
+        chai_dt_axes_2 = plt.scatter(x_axis_indx[0:-2], self.dt_chai_wall_times, color='g', marker='.', s=5)
         plt.grid(True)
-        plt.legend([cur_dt_axes_2, chai_dt_axes_2],
-                   ['Cur Process dt', 'Chai Process dt'])
+        plt.legend([cur_dt_axes_2, chai_dt_axes_2], ['Cur Process dt', 'Chai Process dt'])
+        self.save_graph(plt, title_str+'_timediff')
 
-        plt.show()
-
+    def save_graph(self, handle, str):
+        handle.savefig('./graphs/' + str + '.png', bbox_inches='tight')
 
 mlObj = MessageLatency()
 mlObj.run()
