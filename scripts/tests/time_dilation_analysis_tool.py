@@ -18,6 +18,7 @@ class TimeDilationAnalysis:
         self.simstep_counter_num = []
         self.cb_counter_num = []
         self.initial_time_offset = 0
+        self.dynamic_loop_freq = []
 
         self.x_axis_type = 0    # 0:'Message Num' | 1:'Sim Step Num'    | 2:'Callback Num'
         self.load_type = 0      # 0:'No Load'     | 1:'Haptic Dev Load' | 2:'Client Load' | 3:'Haptic Dev & Client Load'
@@ -40,7 +41,7 @@ class TimeDilationAnalysis:
             chai_sim_time = data.chai_sim_time
             chai_wall_time = data.chai_wall_time
             if chai_wall_time > self.time_window_lims[0]:
-                if self.counter % 50 == 0:
+                if self.counter % 100 == 0:
                     if self.first_run:
                         self.capture_window_times(chai_wall_time)
                         self.initial_time_offset = rospy.Time.now().to_sec() - chai_wall_time
@@ -51,6 +52,7 @@ class TimeDilationAnalysis:
                     self.cur_wall_time.append(time.Time.now().to_sec() - self.initial_time_offset)
                     self.simstep_counter_num.append(data.sim_step)
                     self.msg_counter_num.append(data.header.seq)
+                    self.dynamic_loop_freq.append(data.dynamic_loop_freq)
                 self.counter += 1
 
     def run(self):
@@ -64,25 +66,30 @@ class TimeDilationAnalysis:
                     ' + ' + self.x_axis_dict[self.x_axis_type][0] + \
                     ' + ' + self.dt_dict[self.dt_type]
         plt.title(title_str)
-        first = False
+        plt.figure(1)
         while not rospy.is_shutdown() and not self.done:
             if len(x_axis_indx) > 0:
                 if self.chai_wall_time[-1] > self.time_window_lims[1]:
                     self.done = True
 
                 if self.chai_wall_time[-1] <= self.time_window_lims[1]:
+                    plt.subplot(211)
+                    plt.cla()
                     ct_axes, = plt.plot(x_axis_indx, self.cur_wall_time)
                     wt_axes, = plt.plot(x_axis_indx, self.chai_wall_time)
                     st_axes, = plt.plot(x_axis_indx, self.chai_sim_time)
-                    if not first:
-                        first = True
-                        plt.grid(True)
-                        plt.xlabel(self.x_axis_dict[self.x_axis_type][0])
-                        plt.ylabel('(Time)')
-                        plt.legend([ct_axes, wt_axes, st_axes], ['Current Time', 'Chai Wall Time', 'Simulation Time'])
+                    plt.grid(True)
+                    plt.xlabel(self.x_axis_dict[self.x_axis_type][0])
+                    plt.ylabel('(Time)')
+                    plt.legend([ct_axes, wt_axes, st_axes], ['Current Time', 'Chai Wall Time', 'Simulation Time'])
                     plt.setp(ct_axes, color='b', linewidth=1.0, marker='o', markersize=8)
                     plt.setp(wt_axes, color='r', linewidth=1.0, marker='o', markersize=5)
                     plt.setp(st_axes, color='g', linewidth=1.0, marker='o', markersize=2.5)
+                    plt.subplot(212)
+                    plt.cla()
+                    dl_axes, = plt.plot(x_axis_indx, self.dynamic_loop_freq)
+                    plt.setp(dl_axes, color='r')
+                    plt.grid(True)
                     plt.draw()
                     plt.pause(0.001)
         plt.savefig('./graphs/' + title_str + '.png', bbox_inches='tight')
