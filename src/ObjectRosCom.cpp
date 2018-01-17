@@ -33,12 +33,13 @@ void ObjectRosCom::reset_cmd(){
     m_objectCmd.wrench.torque.x = 0;
     m_objectCmd.wrench.torque.y = 0;
     m_objectCmd.wrench.torque.y = 0;
-    m_objectCmd.joint_cmds[0] = 0;
-    m_objectCmd.joint_cmds[1] = 0;
-    m_objectCmd.joint_cmds[2] = 0;
+    for(size_t idx = 0 ; idx < m_objectCmd.joint_cmds.size() ; idx++){
+        m_objectCmd.joint_cmds[idx] = 0;
+    }
 }
 
 void ObjectRosCom::cmd_sub_cb(chai_msgs::ObjectCmdConstPtr msg){
+    m_objectCmd.joint_cmds.resize(msg->joint_cmds.size());
     m_objectCmd = *msg;
     m_wd.acknowledge_wd();
 }

@@ -8,7 +8,7 @@ struct Cmd{
     Cmd(){
         Fx = Fy = Fz = 0;
         Nx = Ny = Nz = 0;
-        J1 = J2 = J3 = 0;
+        size_J_cmd = 0;
     }
     void update(const chai_msgs::ObjectCmd* cmd){
         Fx = cmd->wrench.force.x;
@@ -17,14 +17,17 @@ struct Cmd{
         Nx = cmd->wrench.torque.x;
         Ny = cmd->wrench.torque.y;
         Nz = cmd->wrench.torque.z;
-        J1 = cmd->joint_cmds[0];
-        J2 = cmd->joint_cmds[1];
-        J3 = cmd->joint_cmds[2];
+        size_J_cmd = cmd->joint_cmds.size();
+        J_cmd.resize(size_J_cmd);
+        for(size_t idx = 0; idx < size_J_cmd ; idx++){
+            J_cmd[idx] = cmd->joint_cmds[idx];
+        }
     }
 
     double Fx, Fy, Fz;
     double Nx, Ny, Nz;
-    double J1, J2, J3;
+    std::vector<double> J_cmd;
+    size_t size_J_cmd;
 };
 
 namespace chai_env{

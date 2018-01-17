@@ -25,16 +25,15 @@ class Object(WatchDog):
         self.time_stamp = data.header.stamp
         self.sim_step_cur = data.sim_step
 
-    def command(self, fx, fy, fz, nx, ny, nz, t1=0, t2=0, t3=0):
+    def command(self, fx, fy, fz, nx, ny, nz, *jnt_cmds):
         self.cmd.wrench.force.x = fx
         self.cmd.wrench.force.y = fy
         self.cmd.wrench.force.z = fz
         self.cmd.wrench.torque.x = nx
         self.cmd.wrench.torque.x = ny
         self.cmd.wrench.torque.x = nz
-        self.cmd.joint_cmds[0] = t1
-        self.cmd.joint_cmds[1] = t2
-        self.cmd.joint_cmds[2] = t3
+        for jcmd in jnt_cmds:
+            self.cmd.joint_cmds.append(jcmd)
         self.cmd.header.stamp = rospy.Time.now()
 
         self.sim_step_pre_update = self.sim_step_cur
