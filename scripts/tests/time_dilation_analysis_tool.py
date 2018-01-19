@@ -21,7 +21,7 @@ class TimeDilationAnalysis:
         self.dynamic_loop_freq = []
 
         self.x_axis_type = 1    # 0:'Message Num' | 1:'Sim Step Num'    | 2:'Callback Num'
-        self.load_type = 0      # 0:'No Load'     | 1:'Haptic Dev Load' | 2:'Client Load' | 3:'Haptic Dev & Client Load'
+        self.load_type = None   # 0:'No Load'     | 1:'Haptic Dev Load' | 2:'Client Load' | 3:'Haptic Dev & Client Load'
         self.dt_type = 0        # 0:'Dynamic dt'  | 1:'Fixed dt = 0.0005'
 
         self.x_axis_dict = {0: ['Message Num', self.msg_counter_num],
@@ -53,6 +53,10 @@ class TimeDilationAnalysis:
                     self.simstep_counter_num.append(data.sim_step)
                     self.msg_counter_num.append(data.header.seq)
                     self.dynamic_loop_freq.append(data.dynamic_loop_freq)
+                    if data.n_devices > 0:
+                        self.load_type = 1
+                    else:
+                        self.load_type = 0
                 self.counter += 1
 
     def run(self):
@@ -62,10 +66,6 @@ class TimeDilationAnalysis:
         print 'X Axis = ', self.x_axis_dict[self.x_axis_type][0]
         x_axis_indx = self.x_axis_dict[self.x_axis_type][1]
 
-        title_str = self.load_dict[self.load_type] + \
-                    ' + ' + self.x_axis_dict[self.x_axis_type][0] + \
-                    ' + ' + self.dt_dict[self.dt_type]
-        plt.title(title_str)
         plt.figure(1)
         ax1 = plt.subplot(211)
         ax2 = plt.subplot(212)
@@ -96,6 +96,11 @@ class TimeDilationAnalysis:
                     plt.setp(dl_axes, color='r')
                     plt.draw()
                     plt.pause(0.001)
+
+        title_str = self.load_dict[self.load_type] + \
+                    ' + ' + self.x_axis_dict[self.x_axis_type][0] + \
+                    ' + ' + self.dt_dict[self.dt_type]
+        ax1.title(title_str)
         plt.savefig('./graphs/' + title_str + '.png', bbox_inches='tight')
         plt.show()
 

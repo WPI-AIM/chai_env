@@ -104,7 +104,7 @@ catkin_python_setup()
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES chai_env chai_obj chai_world
-#  CATKIN_DEPENDS other_catkin_pkg
+  CATKIN_DEPENDS chai_msgs
 #  DEPENDS system_lib
 )
 
