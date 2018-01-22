@@ -139,7 +139,7 @@ class MessageLatency:
         plt.xlabel(x_label)
         plt.ylabel('Time Comparison')
 
-        self.save_graph(plt, plt1_str + datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+        self.save_graph(plt, plt1_str)
 
         self.figure_ctr += 1
         plt2_str = 'Recv vs Read: ' + title_str
@@ -165,11 +165,12 @@ class MessageLatency:
         plt.xlabel(x_label)
         plt.ylabel('Recv vs Read Time')
 
-        self.save_graph(plt, plt2_str + datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+        self.save_graph(plt, plt2_str)
 
-    def save_graph(self, handle, str):
+    def save_graph(self, handle, file_str):
         handle.tight_layout()
-        handle.savefig('./graphs/' + str + '.eps', bbox_inches='tight', format='eps', dpi=600)
+        file_str = file_str + ':' + datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        handle.savefig('./graphs/' + file_str + '.eps', bbox_inches='tight', format='eps', dpi=600)
 
 mlObj = MessageLatency()
 mlObj.run()
