@@ -88,7 +88,7 @@ class TimeDilationAnalysis:
                     dl_axes, = ax2.plot(x_axis_indx, self.dynamic_loop_freq)
                     ax2.grid(True)
                     ax2.set_xlabel(self.x_axis_dict[self.x_axis_type][0])
-                    ax2.set_ylabel('Dynamic Loop Frequency')
+                    ax2.set_ylabel('(Dynamic Loop Frequency)')
 
                     plt.setp(ct_axes, color='b', linewidth=1.0, marker='o', markersize=8)
                     plt.setp(wt_axes, color='r', linewidth=1.0, marker='o', markersize=5)
@@ -105,8 +105,12 @@ class TimeDilationAnalysis:
         file_str = 'Time Dilation: ' + self.load_dict[self.load_type] + \
                     ' + ' + self.x_axis_dict[self.x_axis_type][0] + \
                     ' + ' + self.dt_dict[self.dt_type] + ': ' + datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        plt.savefig('./graphs/' + file_str + '.png', bbox_inches='tight')
+        self.save_graph(plt, file_str)
         plt.show()
+
+    def save_graph(self, handle, str):
+            handle.tight_layout()
+            handle.savefig('./graphs/' + str + '.eps', bbox_inches='tight', format='eps', dpi=600)
 
 
 tdObj = TimeDilationAnalysis()

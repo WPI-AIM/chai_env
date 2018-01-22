@@ -104,26 +104,31 @@ class MessageLatency:
                     self.dt_cur_wall_times = self.calculate_packets_dt(self.cur_process_wall_time)
                     self.dt_chai_wall_times = self.calculate_packets_dt(self.chai_process_wall_time)
                     for keys, item in self.x_axis_dict.iteritems():
-                        title_str = 'Message Latency: ' +self.load_dict[self.load_type] +\
+                        title_str = self.load_dict[self.load_type] +\
                                     '+' + item[0] +\
                                     '+' + self.dt_dict[self.dt_type]
                         x_axis_indx = item[1]
-                        self.generate_graphs(title_str, x_axis_indx)
+                        self.generate_graphs(title_str, x_axis_indx, item[0])
                     plt.show()
 
-    def generate_graphs(self, title_str, x_axis_indx):
+    def generate_graphs(self, title_str, x_axis_indx, x_label):
+        plt1_str = 'Latency Hist: ' + title_str
         self.figure_ctr += 1
         plt.figure(self.figure_ctr)
         plt.subplot(311)
         plt.hist(self.latency_list, bins='auto', stacked=True)
         plt.grid(True)
-        plt.title(title_str)
+        plt.xlabel('Latency')
+        plt.ylabel('No. Packets')
+        plt.title(plt1_str)
 
         # plt.figure(2)
         plt.subplot(312)
-        lt, = plt.plot(self.latency_list, color='r', linewidth=1.0)
+        lt, = plt.plot(x_axis_indx, self.latency_list, color='r', linewidth=1.0)
         plt.grid(True)
         plt.legend([lt], ['Latency over time'])
+        plt.xlabel(x_label)
+        plt.ylabel('Latency')
 
         # plt.figure(3)
         plt.subplot(313)
@@ -131,27 +136,40 @@ class MessageLatency:
         wt, = plt.plot(x_axis_indx, self.chai_process_wall_time, color='g')
         plt.grid(True)
         plt.legend([ct, wt], ['Process Wall Time', 'Chai Wall Time'])
-        self.save_graph(plt, title_str+'_histogram:' + datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-        self.figure_ctr += 1
-        plt.figure(self.figure_ctr)
+        plt.xlabel(x_label)
+        plt.ylabel('Time Comparison')
 
+        self.save_graph(plt, plt1_str + datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+
+        self.figure_ctr += 1
+        plt2_str = 'Recv vs Read: ' + title_str
+        plt.figure(self.figure_ctr)
         plt.subplot(311)
         cur_dt_axes_1 = plt.scatter(x_axis_indx[0:-2], self.dt_cur_wall_times, color='r', marker='.', s=5)
         plt.legend([cur_dt_axes_1], ['Cur Process dt'])
         plt.grid(True)
+        plt.title(plt2_str)
+        plt.xlabel(x_label)
+        plt.ylabel('Read Time')
         plt.subplot(312)
         chai_dt_axes_1 = plt.scatter(x_axis_indx[0:-2], self.dt_chai_wall_times, color='g', marker='.', s=5)
-        plt.legend([cur_dt_axes_1], ['Chai Process dt'])
         plt.grid(True)
+        plt.legend([cur_dt_axes_1], ['Chai Process dt'])
+        plt.xlabel(x_label)
+        plt.ylabel('Recv Time')
         plt.subplot(313)
         cur_dt_axes_2 = plt.scatter(x_axis_indx[0:-2], self.dt_cur_wall_times, color='r', marker='.', s=5)
         chai_dt_axes_2 = plt.scatter(x_axis_indx[0:-2], self.dt_chai_wall_times, color='g', marker='.', s=5)
         plt.grid(True)
         plt.legend([cur_dt_axes_2, chai_dt_axes_2], ['Cur Process dt', 'Chai Process dt'])
-        self.save_graph(plt, title_str+'_timediff:' + datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+        plt.xlabel(x_label)
+        plt.ylabel('Recv vs Read Time')
+
+        self.save_graph(plt, plt2_str + datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 
     def save_graph(self, handle, str):
-        handle.savefig('./graphs/' + str + '.png', bbox_inches='tight')
+        handle.tight_layout()
+        handle.savefig('./graphs/' + str + '.eps', bbox_inches='tight', format='eps', dpi=600)
 
 mlObj = MessageLatency()
 mlObj.run()
