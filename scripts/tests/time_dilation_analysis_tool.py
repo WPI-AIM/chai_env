@@ -3,7 +3,7 @@ import rospy
 from chai_msgs.msg import WorldState
 import matplotlib.pyplot as plt
 import rospy.rostime as time
-
+import datetime
 
 class TimeDilationAnalysis:
     def __init__(self):
@@ -97,11 +97,15 @@ class TimeDilationAnalysis:
                     plt.draw()
                     plt.pause(0.001)
 
-        title_str = self.load_dict[self.load_type] + \
+        title_str = 'Time Dilation: '+ self.load_dict[self.load_type] + \
                     ' + ' + self.x_axis_dict[self.x_axis_type][0] + \
                     ' + ' + self.dt_dict[self.dt_type]
-        ax1.title(title_str)
-        plt.savefig('./graphs/' + title_str + '.png', bbox_inches='tight')
+        print title_str
+        ax1.set_title(title_str)
+        file_str = 'Time Dilation: ' + self.load_dict[self.load_type] + \
+                    ' + ' + self.x_axis_dict[self.x_axis_type][0] + \
+                    ' + ' + self.dt_dict[self.dt_type] + ': ' + datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        plt.savefig('./graphs/' + file_str + '.png', bbox_inches='tight')
         plt.show()
 
 

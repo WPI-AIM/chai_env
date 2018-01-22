@@ -2,6 +2,7 @@
 import rospy
 from chai_msgs.msg import WorldState
 import matplotlib.pyplot as plt
+import datetime
 
 
 class MessageLatency:
@@ -103,7 +104,7 @@ class MessageLatency:
                     self.dt_cur_wall_times = self.calculate_packets_dt(self.cur_process_wall_time)
                     self.dt_chai_wall_times = self.calculate_packets_dt(self.chai_process_wall_time)
                     for keys, item in self.x_axis_dict.iteritems():
-                        title_str = self.load_dict[self.load_type] +\
+                        title_str = 'Message Latency: ' +self.load_dict[self.load_type] +\
                                     '+' + item[0] +\
                                     '+' + self.dt_dict[self.dt_type]
                         x_axis_indx = item[1]
@@ -130,7 +131,7 @@ class MessageLatency:
         wt, = plt.plot(x_axis_indx, self.chai_process_wall_time, color='g')
         plt.grid(True)
         plt.legend([ct, wt], ['Process Wall Time', 'Chai Wall Time'])
-        self.save_graph(plt, title_str+'_histogram')
+        self.save_graph(plt, title_str+'_histogram:' + datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
         self.figure_ctr += 1
         plt.figure(self.figure_ctr)
 
@@ -147,7 +148,7 @@ class MessageLatency:
         chai_dt_axes_2 = plt.scatter(x_axis_indx[0:-2], self.dt_chai_wall_times, color='g', marker='.', s=5)
         plt.grid(True)
         plt.legend([cur_dt_axes_2, chai_dt_axes_2], ['Cur Process dt', 'Chai Process dt'])
-        self.save_graph(plt, title_str+'_timediff')
+        self.save_graph(plt, title_str+'_timediff:' + datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 
     def save_graph(self, handle, str):
         handle.savefig('./graphs/' + str + '.png', bbox_inches='tight')
