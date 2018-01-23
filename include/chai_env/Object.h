@@ -34,7 +34,7 @@ namespace chai_env{
 class Object:public ObjectRosCom{
 public:
     Object(std::string a_name);
-    inline void set_name(std::string name){m_objectState.name.data = name;}
+    inline void set_name(std::string name){m_State.name.data = name;}
     void cur_position(double px, double py, double pz);
     void cur_orientation(double roll, double pitch, double yaw);
     void cur_orientation(double qx, double qy, double qz, double qw);
@@ -42,11 +42,11 @@ public:
     void cur_torque(double nx, double ny, double nz);
     void update_cmd_from_ros();
     void set_chai_wall_time(double a_sec);
-    inline void set_chai_sim_time(double a_sec){ m_objectState.chai_sim_time = a_sec;}
-    inline void set_mass(double a_mass){m_objectState.mass = a_mass;}
-    inline void set_principal_intertia(double Ixx, double Iyy, double Izz){m_objectState.pInertia.x = Ixx; m_objectState.pInertia.y = Iyy; m_objectState.pInertia.z = Izz;}
-    inline void increment_sim_step(){m_objectState.sim_step++;}
-    inline void set_sim_step(uint step){m_objectState.sim_step = step;}
+    inline void set_chai_sim_time(double a_sec){ m_State.chai_sim_time = a_sec;}
+    inline void set_mass(double a_mass){m_State.mass = a_mass;}
+    inline void set_principal_intertia(double Ixx, double Iyy, double Izz){m_State.pInertia.x = Ixx; m_State.pInertia.y = Iyy; m_State.pInertia.z = Izz;}
+    inline void increment_sim_step(){m_State.sim_step++;}
+    inline void set_sim_step(uint step){m_State.sim_step = step;}
     Cmd m_cmd;
 };
 }

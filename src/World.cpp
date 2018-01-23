@@ -7,9 +7,9 @@ World::World(std::string a_name): WorldRosCom(a_name){
 }
 
 void World::set_chai_wall_time(double a_sec){
-    m_worldState.chai_wall_time = a_sec;
+    m_State.chai_wall_time = a_sec;
     increment_sim_step();
-    m_worldState.header.stamp = ros::Time::now();
+    m_State.header.stamp = ros::Time::now();
 }
 
 void World::increment_sim_step(){
@@ -23,7 +23,7 @@ void World::increment_sim_step(){
             std::cerr << "WARN, Skipped " << m_skip_steps_ctr << " steps, Default skip limit " << m_num_skip_steps << std::endl;
         }
     }
-    m_worldState.sim_step++;
+    m_State.sim_step++;
 }
 
 extern "C"{
