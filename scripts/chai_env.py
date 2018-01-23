@@ -81,7 +81,7 @@ class ChaiEnv:
     def _update_observation(self):
         if self.enable_step_throttling:
             step_jump = 0
-            while not step_jump >= self.n_skip_steps:
+            while step_jump < self.n_skip_steps:
                 step_jump = self.obj_handle.get_cur_sim_step() - self.obj_handle.get_pre_update_sim_step()
                 time.sleep(0.0001)
             if step_jump > self.n_skip_steps:
