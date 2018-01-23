@@ -12,7 +12,7 @@
 template <class T_state, class T_cmd>
 class RosComBase{
 public:
-    RosComBase(std::string a_name, int a_freq = 2000){m_name = a_name; m_freq = a_freq;}
+    RosComBase(std::string a_name, int a_freq = 5000){m_name = a_name; m_freq = a_freq;}
     virtual void init() = 0;
     virtual void run_publishers() = 0;
 
