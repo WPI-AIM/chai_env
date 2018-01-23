@@ -30,8 +30,8 @@ class Object(WatchDog):
         self.cmd.wrench.force.y = fy
         self.cmd.wrench.force.z = fz
         self.cmd.wrench.torque.x = nx
-        self.cmd.wrench.torque.x = ny
-        self.cmd.wrench.torque.x = nz
+        self.cmd.wrench.torque.y = ny
+        self.cmd.wrench.torque.z = nz
         for jcmd in jnt_cmds:
             self.cmd.joint_cmds.append(jcmd)
         self.cmd.header.stamp = rospy.Time.now()
@@ -50,8 +50,8 @@ class Object(WatchDog):
         self.cmd.wrench.force.y = 0
         self.cmd.wrench.force.z = 0
         self.cmd.wrench.torque.x = 0
-        self.cmd.wrench.torque.x = 0
-        self.cmd.wrench.torque.x = 0
+        self.cmd.wrench.torque.y = 0
+        self.cmd.wrench.torque.z = 0
 
     def get_pose(self):
         quat = self.pose.orientation

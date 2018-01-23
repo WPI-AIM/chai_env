@@ -36,10 +36,10 @@ ObjectRosCom::~ObjectRosCom(){
 void ObjectRosCom::reset_cmd(){
     m_Cmd.wrench.force.x = 0;
     m_Cmd.wrench.force.y = 0;
-    m_Cmd.wrench.force.y = 0;
+    m_Cmd.wrench.force.z = 0;
     m_Cmd.wrench.torque.x = 0;
     m_Cmd.wrench.torque.y = 0;
-    m_Cmd.wrench.torque.y = 0;
+    m_Cmd.wrench.torque.z = 0;
     for(size_t idx = 0 ; idx < m_Cmd.joint_cmds.size() ; idx++){
         m_Cmd.joint_cmds[idx] = 0;
     }
