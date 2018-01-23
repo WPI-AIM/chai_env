@@ -40,6 +40,10 @@ class ChaiEnv:
 
         pass
 
+    def skip_sim_steps(self, num):
+        self.n_skip_steps = num
+        self.world_handle.set_num_step_skips(num)
+
     def make(self, a_name):
         self.obj_handle = self.chai_client.get_obj_handle(a_name)
         self.world_handle = self.chai_client.get_obj_handle('World')
@@ -68,13 +72,13 @@ class ChaiEnv:
                                   action[4],
                                   action[5])
         self.world_handle.update()
-        self.update_observation()
+        self._update_observation()
         return self.obs.cur_observation()
 
     def render(self, mode):
         print ' I am a {} POTATO'.format(mode)
 
-    def update_observation(self):
+    def _update_observation(self):
         if self.enable_step_throttling:
             step_jump = 0
             while not step_jump >= self.n_skip_steps:
@@ -85,11 +89,11 @@ class ChaiEnv:
 
         state = self.obj_handle.get_pose()
         self.obs.state = state
-        self.obs.reward = self.calculate_reward(state)
-        self.obs.is_done = self.check_if_done()
-        self.obs.info = self.update_info()
+        self.obs.reward = self._calculate_reward(state)
+        self.obs.is_done = self._check_if_done()
+        self.obs.info = self._update_info()
 
-    def calculate_reward(self, state):
+    def _calculate_reward(self, state):
         cur_pose = state
         pos_epsilon = 0.5
         rot_epsilon = 0.1
@@ -104,8 +108,8 @@ class ChaiEnv:
             reward += 50
         return reward
 
-    def check_if_done(self):
+    def _check_if_done(self):
         return False
 
-    def update_info(self):
+    def _update_info(self):
         return {}
