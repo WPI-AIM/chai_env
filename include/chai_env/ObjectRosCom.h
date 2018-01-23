@@ -12,7 +12,6 @@ public:
     ObjectRosCom(std::string a_name, int a_freq);
     ~ObjectRosCom();
     virtual void init();
-    virtual void run_publishers();
 
 
 protected:

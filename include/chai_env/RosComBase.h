@@ -14,7 +14,7 @@ class RosComBase{
 public:
     RosComBase(std::string a_name, int a_freq = 5000){m_name = a_name; m_freq = a_freq;}
     virtual void init() = 0;
-    virtual void run_publishers() = 0;
+    virtual void run_publishers();
 
 protected:
     boost::shared_ptr<ros::NodeHandle> nodePtr;
@@ -38,6 +38,19 @@ protected:
 
     virtual void reset_cmd() = 0;
 };
+
+template<class T_state, class T_cmd>
+void RosComBase<T_state, T_cmd>::run_publishers(){
+    while(nodePtr->ok()){
+        m_pub.publish(m_State);
+        m_custom_queue.callAvailable();
+        if(m_wd.is_wd_expired()){
+            m_wd.consolePrint(m_name);
+            reset_cmd();
+        }
+        ratePtr->sleep();
+    }
+}
 
 
 #endif

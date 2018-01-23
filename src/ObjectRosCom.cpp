@@ -51,14 +51,3 @@ void ObjectRosCom::sub_cb(chai_msgs::ObjectCmdConstPtr msg){
     m_wd.acknowledge_wd();
 }
 
-void ObjectRosCom::run_publishers(){
-    while(nodePtr->ok()){
-        m_pub.publish(m_State);
-        m_custom_queue.callAvailable();
-        if(m_wd.is_wd_expired()){
-            m_wd.consolePrint(m_State.name.data);
-            reset_cmd();
-        }
-        ratePtr->sleep();
-    }
-}

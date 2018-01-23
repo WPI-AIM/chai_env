@@ -11,7 +11,6 @@ public:
     WorldRosCom(std::string a_name, int a_freq);
     ~WorldRosCom();
     virtual void init();
-    virtual void run_publishers();
 
 protected:
     bool m_enableSimThrottle;
