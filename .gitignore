@@ -6,3 +6,9 @@ cisstLog.txt
 .idea/
 
 scripts/tests/graphs/
+
+*.c
+
+*.so
+
+scripts/cython_test/build/

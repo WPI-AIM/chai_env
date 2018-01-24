@@ -3,8 +3,9 @@ import rospy
 from chai_msgs.msg import ObjectState, ObjectCmd, WorldState, WorldCmd
 import threading
 from geometry_msgs.msg import WrenchStamped
-from chai_object import Object
-from chai_world import World
+from object import Object
+from world import World
+import numpy as np
 
 
 class ChaiClient:
@@ -15,6 +16,7 @@ class ChaiClient:
         self.string_cmd = '/Command'
         self.sub_list = []
         self.objects_dict = {}
+        self.object_np = np.array([])
         self.sub_thread = []
         self.pub_thread = []
         self.rate = 0
@@ -24,9 +26,11 @@ class ChaiClient:
     def create_objs_from_rostopics(self):
         rospy.init_node('chai_client')
         rospy.on_shutdown(self.clean_up)
-        self.rate = rospy.Rate(1000)
+        self.rate = rospy.Rate(2000)
         self.ros_topics = rospy.get_published_topics()
-        for i in range(len(self.ros_topics)):
+        cdef int i = 0
+        cdef int topic_len = len(self.ros_topics)
+        for i in range(topic_len):
             for j in range(len(self.ros_topics[i])):
                 prefix_ind = self.ros_topics[i][j].find(self.search_prefix_str)
                 if prefix_ind >= 0:
@@ -48,6 +52,7 @@ class ChaiClient:
                             obj.pub = rospy.Publisher(name=pub_topic_str, data_class=ObjectCmd,tcp_nodelay=True ,queue_size=10)
 
                         self.objects_dict[obj_name] = obj
+                        self.object_np = np.append(self.object_np, obj)
 
     def start(self):
         self.start_pubs()
@@ -74,10 +79,13 @@ class ChaiClient:
         self.pub_thread.start()
 
     def run_obj_publishers(self):
+        cdef int j = len(self.object_np)
+        cdef int i
         while not rospy.is_shutdown():
-            for key, obj in self.objects_dict.items():
-                if obj.is_active():
-                    obj.run_publisher()
+            i= 0
+            for i in range(j):
+                if self.object_np[i].is_active():
+                    self.object_np[i].run_publisher()
             self.rate.sleep()
 
     def print_active_topics(self):

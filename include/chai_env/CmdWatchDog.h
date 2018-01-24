@@ -5,7 +5,7 @@
 
 class CmdWatchDog{
 public:
-    CmdWatchDog(const int &a_freq_min, const int&a_freq_max , double time_out = 0.5): m_freq_min(a_freq_min), m_freq_max(a_freq_max){
+    CmdWatchDog(const int &a_freq_min, const int &a_freq_max , double time_out = 0.5): m_freq_min(a_freq_min), m_freq_max(a_freq_max){
         m_expire_duration.fromSec(time_out);
         m_initialized = false;
         _m_minRatePtr.reset(new ros::Rate(m_freq_min));
