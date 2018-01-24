@@ -12,16 +12,26 @@
 template <class T_state, class T_cmd>
 class RosComBase{
 public:
-    RosComBase(std::string a_name, int a_freq = 5000){m_name = a_name; m_freq = a_freq;}
+    RosComBase(std::string a_name, int a_freq_min = 10, int a_freq_max = 2500)
+    {
+        m_name = a_name;
+        m_chai_namespace = "chai/env";
+
+        int argc = 0;
+        char **argv = 0;
+        ros::init(argc, argv, "chai_env_node");
+        nodePtr.reset(new ros::NodeHandle);
+        aspinPtr.reset(new ros::AsyncSpinner(5));
+        nodePtr->setCallbackQueue(&m_custom_queue);
+        m_watchDogPtr.reset(new CmdWatchDog(a_freq_min, a_freq_max));
+    }
     virtual void init() = 0;
     virtual void run_publishers();
 
 protected:
     boost::shared_ptr<ros::NodeHandle> nodePtr;
     boost::shared_ptr<ros::AsyncSpinner> aspinPtr;
-    boost::shared_ptr<ros::Rate> ratePtr;
-    int m_freq;
-    CmdWatchDog m_wd;
+    boost::shared_ptr<CmdWatchDog> m_watchDogPtr;
 
     std::string m_chai_namespace;
     std::string m_name;
@@ -44,11 +54,11 @@ void RosComBase<T_state, T_cmd>::run_publishers(){
     while(nodePtr->ok()){
         m_pub.publish(m_State);
         m_custom_queue.callAvailable();
-        if(m_wd.is_wd_expired()){
-            m_wd.consolePrint(m_name);
+        if(m_watchDogPtr->is_wd_expired()){
+            m_watchDogPtr->consolePrint(m_name);
             reset_cmd();
         }
-        ratePtr->sleep();
+        m_watchDogPtr->m_ratePtr->sleep();
     }
 }
 
