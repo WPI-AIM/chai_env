@@ -44,6 +44,10 @@ class ChaiEnv:
         self.n_skip_steps = num
         self.world_handle.set_num_step_skips(num)
 
+    def set_throttling_enable(self, check):
+        self.enable_step_throttling = check
+        self.world_handle.enable_throttling(check)
+
     def make(self, a_name):
         self.obj_handle = self.chai_client.get_obj_handle(a_name)
         self.world_handle = self.chai_client.get_obj_handle('World')
@@ -82,8 +86,8 @@ class ChaiEnv:
         if self.enable_step_throttling:
             step_jump = 0
             while step_jump < self.n_skip_steps:
-                step_jump = self.obj_handle.get_cur_sim_step() - self.obj_handle.get_pre_update_sim_step()
-                time.sleep(0.0001)
+                step_jump = self.obj_handle.sim_step_cur - self.obj_handle.sim_step_pre_update
+                time.sleep(0.0005)
             if step_jump > self.n_skip_steps:
                 print 'WARN: Jumped {} steps, Default skip limit {} Steps'.format(step_jump, self.n_skip_steps)
 

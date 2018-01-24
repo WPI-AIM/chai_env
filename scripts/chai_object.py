@@ -18,6 +18,13 @@ class Object(WatchDog):
         self.pub = None
         self.sub = None
         self.pub_flag = True
+        self._active = False
+
+    def set_active(self):
+        self._active = True
+
+    def is_active(self):
+        return self._active
 
     def ros_cb(self, data):
         self.name = data.name.data
@@ -71,3 +78,4 @@ class Object(WatchDog):
                 self.console_print(self.name)
                 self.clear_cmd()
             self.pub.publish(self.cmd)
+

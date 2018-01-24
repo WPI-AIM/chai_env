@@ -24,7 +24,7 @@ class ChaiClient:
     def create_objs_from_rostopics(self):
         rospy.init_node('chai_client')
         rospy.on_shutdown(self.clean_up)
-        self.rate = rospy.Rate(3000)
+        self.rate = rospy.Rate(1000)
         self.ros_topics = rospy.get_published_topics()
         for i in range(len(self.ros_topics)):
             for j in range(len(self.ros_topics[i])):
@@ -37,7 +37,7 @@ class ChaiClient:
                                      prefix_ind + len(self.search_prefix_str):search_ind]
                         if obj_name == 'World' or obj_name == 'world':
                             self.world_name = obj_name
-                            obj = World(obj_name, self.objects_dict)
+                            obj = World(obj_name)
                             obj.sub = rospy.Subscriber(self.ros_topics[i][j], WorldState, obj.ros_cb)
                             pub_topic_str = self.search_prefix_str + obj.name + self.string_cmd
                             obj.pub = rospy.Publisher(name=pub_topic_str, data_class=WorldCmd, queue_size=10)
@@ -54,6 +54,7 @@ class ChaiClient:
 
     def get_obj_handle(self, a_name):
         obj = self.objects_dict.get(a_name)
+        obj.set_active()
         return obj
 
     def get_obj_pose(self, a_name):
@@ -75,7 +76,8 @@ class ChaiClient:
     def run_obj_publishers(self):
         while not rospy.is_shutdown():
             for key, obj in self.objects_dict.items():
-                obj.run_publisher()
+                if obj.is_active():
+                    obj.run_publisher()
             self.rate.sleep()
 
     def print_active_topics(self):

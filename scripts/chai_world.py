@@ -4,16 +4,22 @@ from watch_dog import WatchDog
 
 
 class World(WatchDog):
-    def __init__(self, a_name, a_objects_dict):
+    def __init__(self, a_name):
         super(World, self).__init__(2.0)
         self.state = WorldState()
-        self.objects_dict = a_objects_dict
         self.name = a_name
         self.cmd = WorldCmd()
         self.cmd.enable_step_throttling = False
         self.pub = None
         self.sub = None
         self.pub_flag = True
+        self._active = False
+
+    def set_active(self):
+        self._active = True
+
+    def is_active(self):
+        return self._active
 
     def enable_throttling(self, data):
         self.cmd.enable_step_throttling = data
