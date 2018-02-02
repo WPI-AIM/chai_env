@@ -35,6 +35,7 @@ class World(WatchDog):
     def update(self):
         self.cmd.step_clock = not self.cmd.step_clock
         self.acknowledge_wd()
+        self.pub.publish(self.cmd)
 
     def clear_cmd(self):
         self.cmd.enable_step_throttling = False
@@ -45,4 +46,4 @@ class World(WatchDog):
             if self.is_wd_expired():
                 self.console_print('World')
                 self.clear_cmd()
-            self.pub.publish(self.cmd)
+            # self.pub.publish(self.cmd)

@@ -87,7 +87,7 @@ class ChaiEnv:
             step_jump = 0
             while step_jump < self.n_skip_steps:
                 step_jump = self.obj_handle.sim_step_cur - self.obj_handle.sim_step_pre_update
-                time.sleep(0.0005)
+                time.sleep(0.00001)
             if step_jump > self.n_skip_steps:
                 print 'WARN: Jumped {} steps, Default skip limit {} Steps'.format(step_jump, self.n_skip_steps)
 
