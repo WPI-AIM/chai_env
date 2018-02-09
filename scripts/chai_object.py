@@ -44,6 +44,7 @@ class Object(WatchDog):
         self.cmd.header.stamp = rospy.Time.now()
 
         self.sim_step_pre_update = self.sim_step_cur
+        self.pub.publish(self.cmd)
         self.acknowledge_wd()
 
     def get_cur_sim_step(self):

@@ -6,6 +6,7 @@ import time
 env = ChaiEnv()
 action = env.action_space
 env.make('Torus')
+env.skip_sim_steps(1)
 time.sleep(1)
 env.reset()
 total = 5000

@@ -29,7 +29,7 @@ class ChaiEnv:
         self.chai_client.create_objs_from_rostopics()
         # self.chai_client.print_summary()
         self.n_skip_steps = 5
-        self.chai_client.start()
+        # self.chai_client.start()
         self.enable_step_throttling = True
         self.obs = Observation()
         self.action_lims = np.array([30, 30, 30, 2, 2, 2])

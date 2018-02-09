@@ -34,6 +34,7 @@ class World(WatchDog):
 
     def update(self):
         self.cmd.step_clock = not self.cmd.step_clock
+        self.pub.publish(self.cmd)
         self.acknowledge_wd()
 
     def clear_cmd(self):
