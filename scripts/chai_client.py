@@ -45,7 +45,7 @@ class ChaiClient:
                             obj = Object(obj_name)
                             obj.sub = rospy.Subscriber(self.ros_topics[i][j], ObjectState, obj.ros_cb)
                             pub_topic_str = self.search_prefix_str + obj.name + self.string_cmd
-                            obj.pub = rospy.Publisher(name=pub_topic_str, data_class=ObjectCmd,tcp_nodelay=True ,queue_size=10)
+                            obj.pub = rospy.Publisher(name=pub_topic_str, data_class=ObjectCmd,tcp_nodelay=True, queue_size=10)
 
                         self.objects_dict[obj_name] = obj
 

@@ -9,7 +9,7 @@ env.make('Torus')
 env.skip_sim_steps(1)
 time.sleep(1)
 env.reset()
-total = 5000
+total = 50000
 for i in range(1,total):
     state, r, d, dict = env.step(env.action_space.sample())
     if i % 50 == 0:

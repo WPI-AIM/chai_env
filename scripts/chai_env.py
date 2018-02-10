@@ -37,6 +37,7 @@ class ChaiEnv:
         self.observation_space = spaces.Box(-np.inf, np.inf, shape=(6,))
 
         self.Base = self.chai_client.get_obj_handle('Base')
+        self.prev_sim_step = 0
 
         pass
 
@@ -86,8 +87,9 @@ class ChaiEnv:
         if self.enable_step_throttling:
             step_jump = 0
             while step_jump < self.n_skip_steps:
-                step_jump = self.obj_handle.sim_step_cur - self.obj_handle.sim_step_pre_update
-                time.sleep(0.0005)
+                step_jump = self.obj_handle.get_sim_step() - self.prev_sim_step
+                time.sleep(0.00001)
+            self.prev_sim_step = self.obj_handle.get_sim_step()
             if step_jump > self.n_skip_steps:
                 print 'WARN: Jumped {} steps, Default skip limit {} Steps'.format(step_jump, self.n_skip_steps)
 

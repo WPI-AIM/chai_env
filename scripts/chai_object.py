@@ -10,8 +10,7 @@ class Object(WatchDog):
     def __init__(self, a_name):
         super(Object, self).__init__()
         self.time_stamp = []
-        self.sim_step_cur = 0
-        self.sim_step_pre_update = 0
+        self.sim_step = 0
         self.name = a_name
         self.pose = Pose()
         self.cmd = ObjectCmd()
@@ -30,7 +29,7 @@ class Object(WatchDog):
         self.name = data.name.data
         self.pose = data.pose
         self.time_stamp = data.header.stamp
-        self.sim_step_cur = data.sim_step
+        self.sim_step = data.sim_step
 
     def command(self, fx, fy, fz, nx, ny, nz, *jnt_cmds):
         self.cmd.wrench.force.x = fx
@@ -43,15 +42,11 @@ class Object(WatchDog):
             self.cmd.joint_cmds.append(jcmd)
         self.cmd.header.stamp = rospy.Time.now()
 
-        self.sim_step_pre_update = self.sim_step_cur
         self.pub.publish(self.cmd)
         self.acknowledge_wd()
 
-    def get_cur_sim_step(self):
-        return self.sim_step_cur
-
-    def get_pre_update_sim_step(self):
-        return self.sim_step_pre_update
+    def get_sim_step(self):
+        return self.sim_step
 
     def clear_cmd(self):
         self.cmd.wrench.force.x = 0
