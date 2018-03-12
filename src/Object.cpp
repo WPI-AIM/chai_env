@@ -1,7 +1,7 @@
 #include "chai_env/Object.h"
 namespace chai_env{
 Object::Object(std::string a_name): ObjectRosCom(a_name){
-
+  m_afCmd.pos_ctrl = false;
 }
 
 void Object::cur_position(double px, double py, double pz){
@@ -34,8 +34,8 @@ void Object::cur_torque(double nx, double ny, double nz){
     tf::vector3TFToMsg(n, m_State.wrench.torque);
 }
 
-void Object::update_cmd_from_ros(){
-    m_cmd.update(&m_Cmd);
+void Object::update_af_cmd(){
+    m_afCmd.update(&m_Cmd);
 }
 
 void Object::set_chai_wall_time(double a_sec){

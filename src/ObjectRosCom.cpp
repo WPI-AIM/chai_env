@@ -25,6 +25,7 @@ ObjectRosCom::~ObjectRosCom(){
 }
 
 void ObjectRosCom::reset_cmd(){
+    m_Cmd.pos_ctrl = false;
     m_Cmd.wrench.force.x = 0;
     m_Cmd.wrench.force.y = 0;
     m_Cmd.wrench.force.z = 0;
