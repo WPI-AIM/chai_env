@@ -38,7 +38,9 @@ void ObjectRosCom::reset_cmd(){
 }
 
 void ObjectRosCom::sub_cb(chai_msgs::ObjectCmdConstPtr msg){
-    m_Cmd.joint_cmds.resize(msg->joint_cmds.size());
+    if (m_Cmd.joint_cmds.size() != msg->joint_cmds.size()){
+      m_Cmd.joint_cmds.resize(msg->joint_cmds.size());
+    }
     m_Cmd = *msg;
     m_watchDogPtr->acknowledge_wd();
 }
