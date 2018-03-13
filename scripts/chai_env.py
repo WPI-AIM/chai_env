@@ -6,12 +6,15 @@ import math
 import time
 from chai_world import World
 from chai_object import Object
+from numpy import linalg as LA
 
 
 class Observation:
     def __init__(self):
         self.state = []
         self.reward = 0.0
+        self.prev_reward = 0.0
+        self.cur_reward = 0.0
         self.is_done = False
         self.info = {}
         self.sim_step_no = 0
@@ -31,6 +34,7 @@ class ChaiEnv:
         self.n_skip_steps = 5
         # self.chai_client.start()
         self.enable_step_throttling = True
+        self.action = []
         self.obs = Observation()
         self.action_lims = np.array([30, 30, 30, 2, 2, 2])
         self.action_space = spaces.Box(-self.action_lims, self.action_lims)
@@ -69,6 +73,7 @@ class ChaiEnv:
     def step(self, action):
         action[0:3] = np.clip(action[0:3], -self.action_lims[0:3], self.action_lims[0:3])
         action[3:6] = np.clip(action[3:6], -self.action_lims[3:6], self.action_lims[3:6])
+        self.action = action
         assert len(action) == 6
         self.obj_handle.command(action[0],
                                   action[1],
@@ -100,18 +105,18 @@ class ChaiEnv:
         self.obs.info = self._update_info()
 
     def _calculate_reward(self, state):
-        cur_pose = state
-        pos_epsilon = 0.5
-        rot_epsilon = 0.1
-        reward = 0.0
-        if math.fabs(cur_pose[0]) < pos_epsilon and\
-            math.fabs(cur_pose[1]) < pos_epsilon and\
-            0.926 - math.fabs(cur_pose[2]) < pos_epsilon:
-            reward = 100
-        if math.fabs(cur_pose[3]) < rot_epsilon and\
-            math.fabs(cur_pose[4]) < rot_epsilon and\
-            math.fabs(cur_pose[5]) < rot_epsilon:
-            reward += 50
+        max_reward = 1
+        self.obs.prev_reward = self.obs.cur_reward
+        self.obs.cur_reward = max_reward / LA.norm(np.subtract(self.Base.get_pose()[0:3], self.obs.state[0:3]))
+        action_penalty = np.sum(np.square(self.action))
+        if self.obs.cur_reward > self.obs.prev_reward:
+            reward = self.obs.cur_reward
+        elif self.obs.cur_reward < self.obs.prev_reward:
+            reward = 3 * (self.obs.cur_reward - self.obs.prev_reward)
+        else:
+            reward = 0.0
+
+        reward = reward - action_penalty
         return reward
 
     def _check_if_done(self):
