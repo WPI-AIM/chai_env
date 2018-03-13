@@ -75,12 +75,12 @@ class ChaiEnv:
         action[3:6] = np.clip(action[3:6], -self.action_lims[3:6], self.action_lims[3:6])
         self.action = action
         assert len(action) == 6
-        self.obj_handle.command(action[0],
-                                  action[1],
-                                  action[2],
-                                  action[3],
-                                  action[4],
-                                  action[5])
+        self.obj_handle.pose_command(action[0],
+                                     action[1],
+                                     action[2],
+                                     action[3],
+                                     action[4],
+                                     action[5])
         self.world_handle.update()
         self._update_observation()
         return self.obs.cur_observation()

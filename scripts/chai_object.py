@@ -31,16 +31,31 @@ class Object(WatchDog):
         self.time_stamp = data.header.stamp
         self.sim_step = data.sim_step
 
-    def command(self, fx, fy, fz, nx, ny, nz, *jnt_cmds):
+    def pose_command(self, px, py, pz, roll, pitch, yaw, *jnt_cmds):
+        quat = transformations.quaternion_from_euler(roll, pitch, yaw, 'szyx')
+        self.cmd.pos_ctrl = True
+        self.cmd.pose.position.x = px
+        self.cmd.pose.position.y = py
+        self.cmd.pose.position.z = pz
+        self.cmd.pose.orientation.x = quat[0]
+        self.cmd.pose.orientation.y = quat[1]
+        self.cmd.pose.orientation.z = quat[2]
+        self.cmd.pose.orientation.w = quat[3]
+
+        for jcmd in jnt_cmds:
+            self.cmd.joint_cmds.append(jcmd)
+        self.cmd.header.stamp = rospy.Time.now()
+
+        self.pub.publish(self.cmd)
+        self.acknowledge_wd()
+
+    def wrench_command(self, fx, fy, fz, nx, ny, nz):
         self.cmd.wrench.force.x = fx
         self.cmd.wrench.force.y = fy
         self.cmd.wrench.force.z = fz
         self.cmd.wrench.torque.x = nx
         self.cmd.wrench.torque.y = ny
         self.cmd.wrench.torque.z = nz
-        for jcmd in jnt_cmds:
-            self.cmd.joint_cmds.append(jcmd)
-        self.cmd.header.stamp = rospy.Time.now()
 
         self.pub.publish(self.cmd)
         self.acknowledge_wd()
