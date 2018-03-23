@@ -31,15 +31,13 @@ class ChaiEnv:
 
         self.chai_client = ChaiClient()
         self.chai_client.create_objs_from_rostopics()
-        # self.chai_client.print_summary()
         self.n_skip_steps = 5
-        # self.chai_client.start()
         self.enable_step_throttling = True
         self.action = []
         self.obs = Observation()
         self.action_lims = np.array([30, 30, 30, 2, 2, 2])
         self.action_space = spaces.Box(-self.action_lims, self.action_lims)
-        self.observation_space = spaces.Box(-np.inf, np.inf, shape=(12,))
+        self.observation_space = spaces.Box(-np.inf, np.inf, shape=(13,))
 
         self.base_handle = self.chai_client.get_obj_handle('Base')
         self.prev_sim_step = 0
@@ -98,8 +96,12 @@ class ChaiEnv:
             self.prev_sim_step = self.obj_handle.get_sim_step()
             if step_jump > self.n_skip_steps:
                 print 'WARN: Jumped {} steps, Default skip limit {} Steps'.format(step_jump, self.n_skip_steps)
+        else:
+            cur_sim_step = self.obj_handle.get_sim_step()
+            step_jump = cur_sim_step - self.prev_sim_step
+            self.prev_sim_step = cur_sim_step
 
-        state = self.obj_handle.get_pose() + self.base_handle.get_pose()
+        state = self.obj_handle.get_pose() + self.base_handle.get_pose() + [step_jump]
         self.obs.state = state
         self.obs.reward = self._calculate_reward(state, action)
         self.obs.is_done = self._check_if_done()
