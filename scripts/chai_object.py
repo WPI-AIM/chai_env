@@ -42,8 +42,7 @@ class Object(WatchDog):
         self.cmd.pose.orientation.z = quat[2]
         self.cmd.pose.orientation.w = quat[3]
 
-        for jcmd in jnt_cmds:
-            self.cmd.joint_cmds.append(jcmd)
+        self.cmd.joint_cmds = [jnt for jnt in jnt_cmds]
         self.cmd.header.stamp = rospy.Time.now()
 
         self.pub.publish(self.cmd)
