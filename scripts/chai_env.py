@@ -11,7 +11,7 @@ from numpy import linalg as LA
 
 class Observation:
     def __init__(self):
-        self.state = [0]*12
+        self.state = [0]*13
         self.dist = 0
         self.reward = 0.0
         self.prev_reward = 0.0
@@ -35,8 +35,9 @@ class ChaiEnv:
         self.enable_step_throttling = True
         self.action = []
         self.obs = Observation()
-        self.action_lims = np.array([30, 30, 30, 2, 2, 2])
-        self.action_space = spaces.Box(-self.action_lims, self.action_lims)
+        self.action_lims_low = np.array([-30, -30, -30, -2, -2, -2, 0])
+        self.action_lims_high = np.array([30, 30, 30, 2, 2, 2, 1])
+        self.action_space = spaces.Box(self.action_lims_low, self.action_lims_high)
         self.observation_space = spaces.Box(-np.inf, np.inf, shape=(13,))
 
         self.base_handle = self.chai_client.get_obj_handle('Base')
@@ -66,20 +67,22 @@ class ChaiEnv:
                   0.0,
                   0.0,
                   0.0,
+                  0.0,
                   0.0]
         return self.step(action)[0]
 
     def step(self, action):
-        action[0:3] = np.clip(action[0:3], -self.action_lims[0:3], self.action_lims[0:3])
-        action[3:6] = np.clip(action[3:6], -self.action_lims[3:6], self.action_lims[3:6])
+        assert len(action) == 7
+        action = np.clip(action, self.action_lims_low, self.action_lims_high)
         self.action = action
-        assert len(action) == 6
+
         self.obj_handle.pose_command(action[0],
                                      action[1],
                                      action[2],
                                      action[3],
                                      action[4],
-                                     action[5])
+                                     action[5],
+                                     action[6])
         self.world_handle.update()
         self._update_observation(action)
         return self.obs.cur_observation()
