@@ -101,6 +101,9 @@ public:
     inline void set_principal_intertia(double Ixx, double Iyy, double Izz){m_State.pInertia.x = Ixx; m_State.pInertia.y = Iyy; m_State.pInertia.z = Izz;}
     inline void increment_sim_step(){m_State.sim_step++;}
     inline void set_sim_step(uint step){m_State.sim_step = step;}
+    inline void set_userdata_desc(std::string description){m_State.userdata_description = description;}
+    void set_userdata(float a_data);
+    void set_userdata(std::vector<float> &a_data);
     AFCmd m_afCmd;
 };
 }

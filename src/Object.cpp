@@ -87,6 +87,20 @@ void Object::set_chai_wall_time(double a_sec){
     m_State.header.stamp = ros::Time::now();
 }
 
+void Object::set_userdata(float a_data){
+    if (m_State.userdata.size() != 1){
+        m_State.userdata.resize(1);
+    }
+    m_State.userdata[0] = a_data;
+}
+
+void Object::set_userdata(std::vector<float> &a_data){
+    if (m_State.userdata.size() != a_data.size()){
+        m_State.userdata.resize(a_data.size());
+    }
+    m_State.userdata = a_data;
+}
+
 extern "C"{
 
 Object* create_object(std::string name){
