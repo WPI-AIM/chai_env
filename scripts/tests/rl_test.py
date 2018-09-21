@@ -10,7 +10,7 @@ from rl.memory import SequentialMemory
 from rl.random import OrnsteinUhlenbeckProcess
 
 
-ENV_NAME = 'Torus'
+ENV_NAME = 'Gripper1'
 
 
 # Get the environment and extract the number of actions.

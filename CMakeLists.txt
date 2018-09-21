@@ -103,7 +103,7 @@ catkin_python_setup()
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
   INCLUDE_DIRS include
-  LIBRARIES chai_env chai_obj chai_world
+  LIBRARIES chai_env
   CATKIN_DEPENDS chai_msgs
 #  DEPENDS system_lib
 )
@@ -122,43 +122,22 @@ include_directories(
 set (ENV_HDR_FILES include/${PROJECT_NAME}/chai_env.h
                include/${PROJECT_NAME}/Object.h
                include/${PROJECT_NAME}/RosComBase.h
+               include/${PROJECT_NAME}/StaticParams.h
                include/${PROJECT_NAME}/ObjectRosCom.h
-	       include/${PROJECT_NAME}/CmdWatchDog.h)
-
-set (ENV_SRC_FILES src/chai_env.cpp
-               src/Object.cpp
-               src/ObjectRosCom.cpp)
-
-set (OBJ_HDR_FILES include/${PROJECT_NAME}/Object.h
-               include/${PROJECT_NAME}/RosComBase.h
-               include/${PROJECT_NAME}/ObjectRosCom.h
-	       include/${PROJECT_NAME}/CmdWatchDog.h)
-
-
-set (OBJ_SRC_FILES src/Object.cpp
-               src/ObjectRosCom.cpp)
-
-
-set (WORLD_HDR_FILES include/${PROJECT_NAME}/World.h
-               include/${PROJECT_NAME}/RosComBase.h
                include/${PROJECT_NAME}/WorldRosCom.h
 	       include/${PROJECT_NAME}/CmdWatchDog.h)
 
-
-set (WORLD_SRC_FILES src/World.cpp
+set (ENV_SRC_FILES src/StaticParams.cpp
+               src/RosComBase.cpp
+               src/chai_env.cpp
+               src/Object.cpp
+               src/ObjectRosCom.cpp
+               src/World.cpp
                src/WorldRosCom.cpp)
 
 ## Declare a C++ library
  add_library(chai_env ${ENV_HDR_FILES}
    ${ENV_SRC_FILES}
- )
-
-add_library(chai_obj ${OBJ_HDR_FILES}
-   ${OBJ_SRC_FILES}
- )
-
-add_library(chai_world ${WORLD_HDR_FILES}
-   ${WORLD_SRC_FILES}
  )
 
 ## Add cmake target dependencies of the library
@@ -183,14 +162,6 @@ add_library(chai_world ${WORLD_HDR_FILES}
 
 ## Specify libraries to link a library or executable target against
  target_link_libraries(chai_env
-   ${catkin_LIBRARIES}
- )
-
-target_link_libraries(chai_obj
-   ${catkin_LIBRARIES}
- )
-
-target_link_libraries(chai_world
    ${catkin_LIBRARIES}
  )
 

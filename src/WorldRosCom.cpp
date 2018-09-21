@@ -42,6 +42,10 @@
 
 #include "chai_env/WorldRosCom.h"
 
+boost::shared_ptr<ros::NodeHandle> StaticParams::nodePtr;
+std::string StaticParams::m_chai_namespace;
+int StaticParams::m_usage_ctr;
+
 WorldRosCom::WorldRosCom(std::string a_name): RosComBase(a_name){
     init();
 }
