@@ -54,10 +54,10 @@
 template <class T_state, class T_cmd>
 class RosComBase{
 public:
-    RosComBase(std::string a_name, int a_freq_min = 10, int a_freq_max = 2500)
+    RosComBase(std::string a_name, std::string a_namespace, int a_freq_min = 10, int a_freq_max = 2500)
     {
         m_name = a_name;
-        m_chai_namespace = "chai/env";
+        m_chai_namespace = a_namespace;
 
         int argc = 0;
         char **argv = 0;

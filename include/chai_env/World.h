@@ -50,6 +50,7 @@ namespace chai_env{
 class World: public WorldRosCom{
 public:
     World(std::string a_name);
+    World(std::string a_name, std::string a_namespace);
     void set_chai_wall_time(double a_sec);
     void increment_sim_step();
     inline void set_chai_sim_time(double a_sec){m_State.chai_sim_time = a_sec;}

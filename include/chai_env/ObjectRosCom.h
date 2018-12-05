@@ -50,8 +50,8 @@
 
 class ObjectRosCom: public RosComBase<chai_msgs::ObjectState, chai_msgs::ObjectCmd>{
 public:
-    ObjectRosCom(std::string a_name);
-    ObjectRosCom(std::string a_name, int a_freq_min, int a_freq_max);
+    ObjectRosCom(std::string a_name, std::string a_namespace);
+    ObjectRosCom(std::string a_name, std::string a_namespace, int a_freq_min, int a_freq_max);
     ~ObjectRosCom();
     virtual void init();
 

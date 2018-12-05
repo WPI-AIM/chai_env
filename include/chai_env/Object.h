@@ -88,6 +88,7 @@ namespace chai_env{
 class Object:public ObjectRosCom{
 public:
     Object(std::string a_name);
+    Object(std::string a_name, std::string a_namespace);
     inline void set_name(std::string name){m_State.name.data = name;}
     void cur_position(double px, double py, double pz);
     void cur_orientation(double roll, double pitch, double yaw);

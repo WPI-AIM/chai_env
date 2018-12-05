@@ -43,7 +43,11 @@
 #include "chai_env/World.h"
 
 namespace chai_env{
-World::World(std::string a_name): WorldRosCom(a_name){
+
+World::World(std::string a_name): World(a_name, "/chai/env/"){
+}
+
+World::World(std::string a_name, std::string a_namespace): WorldRosCom(a_name, a_namespace){
     m_num_skip_steps = 10;
     m_skip_steps_ctr = 0;
 }

@@ -42,11 +42,11 @@
 
 #include "chai_env/WorldRosCom.h"
 
-WorldRosCom::WorldRosCom(std::string a_name): RosComBase(a_name){
+WorldRosCom::WorldRosCom(std::string a_name, std::string a_namespace): RosComBase(a_name, a_namespace){
     init();
 }
 
-WorldRosCom::WorldRosCom(std::string a_name, int a_freq_min, int a_freq_max): RosComBase(a_name, a_freq_min, a_freq_max){
+WorldRosCom::WorldRosCom(std::string a_name, std::string a_namespace, int a_freq_min, int a_freq_max): RosComBase(a_name, a_namespace, a_freq_min, a_freq_max){
     init();
 }
 

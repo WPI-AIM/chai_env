@@ -49,8 +49,8 @@
 
 class WorldRosCom: public RosComBase<chai_msgs::WorldState, chai_msgs::WorldCmd>{
 public:
-    WorldRosCom(std::string a_name);
-    WorldRosCom(std::string a_name, int a_freq_min, int a_freq_max);
+    WorldRosCom(std::string a_name, std::string a_namespace);
+    WorldRosCom(std::string a_name, std::string a_namespace, int a_freq_min, int a_freq_max);
     ~WorldRosCom();
     virtual void init();
 

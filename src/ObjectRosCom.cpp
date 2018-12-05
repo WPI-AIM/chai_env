@@ -42,11 +42,11 @@
 
 #include "chai_env/ObjectRosCom.h"
 
-ObjectRosCom::ObjectRosCom(std::string a_name): RosComBase(a_name){
+ObjectRosCom::ObjectRosCom(std::string a_name, std::string a_namespace): RosComBase(a_name, a_namespace){
     init();
 }
 
-ObjectRosCom::ObjectRosCom(std::string a_name, int a_freq_min, int a_freq_max): RosComBase(a_name, a_freq_min, a_freq_max){
+ObjectRosCom::ObjectRosCom(std::string a_name, std::string a_namespace, int a_freq_min, int a_freq_max): RosComBase(a_name, a_namespace, a_freq_min, a_freq_max){
     init();
 }
 

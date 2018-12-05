@@ -43,7 +43,11 @@
 
 #include "chai_env/Object.h"
 namespace chai_env{
-Object::Object(std::string a_name): ObjectRosCom(a_name){
+
+Object::Object(std::string a_name): Object(a_name, "/chai/env/"){
+}
+
+Object::Object(std::string a_name, std::string a_namespace): ObjectRosCom(a_name, a_namespace){
   m_afCmd.pos_ctrl = false;
 }
 
