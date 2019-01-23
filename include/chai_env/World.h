@@ -17,7 +17,7 @@
     disclaimer in the documentation and/or other materials provided
     with the distribution.
 
-    * Neither the name of CHAI3D nor the names of its contributors may
+    * Neither the name of authors nor the names of its contributors may
     be used to endorse or promote products derived from this software
     without specific prior written permission.
 
@@ -49,8 +49,7 @@
 namespace chai_env{
 class World: public WorldRosCom{
 public:
-    World(std::string a_name);
-    World(std::string a_name, std::string a_namespace);
+    World(std::string a_name, std::string a_namespace, int a_freq_min, int a_freq_max);
     void set_chai_wall_time(double a_sec);
     void increment_sim_step();
     inline void set_chai_sim_time(double a_sec){m_State.chai_sim_time = a_sec;}

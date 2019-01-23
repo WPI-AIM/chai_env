@@ -17,7 +17,7 @@
     disclaimer in the documentation and/or other materials provided
     with the distribution.
 
-    * Neither the name of CHAI3D nor the names of its contributors may
+    * Neither the name of authors nor the names of its contributors may
     be used to endorse or promote products derived from this software
     without specific prior written permission.
 
@@ -42,10 +42,6 @@
 
 #include "chai_env/ObjectRosCom.h"
 
-ObjectRosCom::ObjectRosCom(std::string a_name, std::string a_namespace): RosComBase(a_name, a_namespace){
-    init();
-}
-
 ObjectRosCom::ObjectRosCom(std::string a_name, std::string a_namespace, int a_freq_min, int a_freq_max): RosComBase(a_name, a_namespace, a_freq_min, a_freq_max){
     init();
 }
@@ -67,7 +63,7 @@ ObjectRosCom::~ObjectRosCom(){
 }
 
 void ObjectRosCom::reset_cmd(){
-    m_Cmd.pos_ctrl = false;
+    m_Cmd.enable_position_controller = false;
     m_Cmd.wrench.force.x = 0;
     m_Cmd.wrench.force.y = 0;
     m_Cmd.wrench.force.z = 0;
@@ -76,6 +72,9 @@ void ObjectRosCom::reset_cmd(){
     m_Cmd.wrench.torque.z = 0;
     for(size_t idx = 0 ; idx < m_Cmd.joint_cmds.size() ; idx++){
         m_Cmd.joint_cmds[idx] = 0;
+    }
+    for(size_t idx = 0 ; idx < m_Cmd.position_controller_mask.size() ; idx++){
+        m_Cmd.position_controller_mask[idx] = 0;
     }
 }
 

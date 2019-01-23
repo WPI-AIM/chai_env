@@ -48,9 +48,9 @@ ChaiEnv::ChaiEnv(){
 }
 
 
-void ChaiEnv::add_object(std::string name){
+void ChaiEnv::add_object(std::string name, std::string a_namespace, int a_min_freq, int a_max_freq){
     if(!object_exists(name)){
-        m_objectMap[name] = boost::shared_ptr<chai_env::Object>(new chai_env::Object(name));
+        m_objectMap[name] = boost::shared_ptr<chai_env::Object>(new chai_env::Object(name, a_namespace, a_min_freq, a_max_freq));
     }
     else{
         std::cerr<< "ERROR!, OBJECT: \""<< name << "\" ALREADY EXISTS. IGNORING" << std::endl;

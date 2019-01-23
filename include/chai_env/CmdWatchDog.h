@@ -17,7 +17,7 @@
     disclaimer in the documentation and/or other materials provided
     with the distribution.
 
-    * Neither the name of CHAI3D nor the names of its contributors may
+    * Neither the name of authors nor the names of its contributors may
     be used to endorse or promote products derived from this software
     without specific prior written permission.
 

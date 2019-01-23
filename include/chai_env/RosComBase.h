@@ -17,7 +17,7 @@
     disclaimer in the documentation and/or other materials provided
     with the distribution.
 
-    * Neither the name of CHAI3D nor the names of its contributors may
+    * Neither the name of authors nor the names of its contributors may
     be used to endorse or promote products derived from this software
     without specific prior written permission.
 
@@ -54,7 +54,7 @@
 template <class T_state, class T_cmd>
 class RosComBase{
 public:
-    RosComBase(std::string a_name, std::string a_namespace, int a_freq_min = 10, int a_freq_max = 2500)
+    RosComBase(std::string a_name, std::string a_namespace, int a_freq_min, int a_freq_max)
     {
         m_name = a_name;
         m_chai_namespace = a_namespace;
@@ -63,7 +63,7 @@ public:
         char **argv = 0;
         ros::init(argc, argv, "chai_env_node");
         nodePtr.reset(new ros::NodeHandle);
-        aspinPtr.reset(new ros::AsyncSpinner(5));
+        aspinPtr.reset(new ros::AsyncSpinner(1));
         nodePtr->setCallbackQueue(&m_custom_queue);
         m_watchDogPtr.reset(new CmdWatchDog(a_freq_min, a_freq_max));
     }

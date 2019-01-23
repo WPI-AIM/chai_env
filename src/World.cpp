@@ -17,7 +17,7 @@
     disclaimer in the documentation and/or other materials provided
     with the distribution.
 
-    * Neither the name of CHAI3D nor the names of its contributors may
+    * Neither the name of authors nor the names of its contributors may
     be used to endorse or promote products derived from this software
     without specific prior written permission.
 
@@ -44,10 +44,7 @@
 
 namespace chai_env{
 
-World::World(std::string a_name): World(a_name, "/chai/env/"){
-}
-
-World::World(std::string a_name, std::string a_namespace): WorldRosCom(a_name, a_namespace){
+World::World(std::string a_name, std::string a_namespace, int a_freq_min, int a_freq_max): WorldRosCom(a_name, a_namespace, a_freq_min, a_freq_max){
     m_num_skip_steps = 10;
     m_skip_steps_ctr = 0;
 }
@@ -74,8 +71,8 @@ void World::increment_sim_step(){
 
 extern "C"{
 
-World* create_world(std::string name){
-    return new World(name);
+World* create_world(std::string a_name, std::string a_namespace="/chai_env/", int a_min_freq=50, int a_max_freq=1000){
+    return new World(a_name, a_namespace, a_min_freq, a_max_freq);
 }
 
 void destroy_world(World* obj){

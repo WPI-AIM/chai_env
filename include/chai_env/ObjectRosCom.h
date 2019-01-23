@@ -17,7 +17,7 @@
     disclaimer in the documentation and/or other materials provided
     with the distribution.
 
-    * Neither the name of CHAI3D nor the names of its contributors may
+    * Neither the name of authors nor the names of its contributors may
     be used to endorse or promote products derived from this software
     without specific prior written permission.
 
@@ -50,11 +50,9 @@
 
 class ObjectRosCom: public RosComBase<chai_msgs::ObjectState, chai_msgs::ObjectCmd>{
 public:
-    ObjectRosCom(std::string a_name, std::string a_namespace);
     ObjectRosCom(std::string a_name, std::string a_namespace, int a_freq_min, int a_freq_max);
     ~ObjectRosCom();
     virtual void init();
-
 
 protected:
     virtual void reset_cmd();

@@ -18,7 +18,7 @@
     disclaimer in the documentation and/or other materials provided
     with the distribution.
 
-    * Neither the name of CHAI3D nor the names of its contributors may
+    * Neither the name of authors nor the names of its contributors may
     be used to endorse or promote products derived from this software
     without specific prior written permission.
 
@@ -44,11 +44,8 @@
 #include "chai_env/Object.h"
 namespace chai_env{
 
-Object::Object(std::string a_name): Object(a_name, "/chai/env/"){
-}
-
-Object::Object(std::string a_name, std::string a_namespace): ObjectRosCom(a_name, a_namespace){
-  m_afCmd.pos_ctrl = false;
+Object::Object(std::string a_name, std::string a_namespace, int a_freq_min, int a_freq_max): ObjectRosCom(a_name, a_namespace, a_freq_min, a_freq_max){
+  m_afCmd.enable_position_controller = false;
 }
 
 void Object::cur_position(double px, double py, double pz){
@@ -105,10 +102,20 @@ void Object::set_userdata(std::vector<float> &a_data){
     m_State.userdata = a_data;
 }
 
+void Object::set_children(std::vector<std::string> children_names){
+    m_State.children.clear();
+    m_State.children = children_names;
+}
+
+void Object::set_joint_positions(std::vector<float> joint_positions){
+    m_State.joint_positions.clear();
+    m_State.joint_positions = joint_positions;
+}
+
 extern "C"{
 
-Object* create_object(std::string name){
-    return new Object(name);
+Object* create_object(std::string a_name, std::string a_namespace="/chai_env/", int a_min_freq=50, int a_max_freq=1000){
+    return new Object(a_name, a_namespace, a_min_freq, a_max_freq);
 }
 
 void destroy_object(Object* obj){

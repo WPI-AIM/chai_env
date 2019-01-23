@@ -17,7 +17,7 @@
     disclaimer in the documentation and/or other materials provided
     with the distribution.
 
-    * Neither the name of CHAI3D nor the names of its contributors may
+    * Neither the name of authors nor the names of its contributors may
     be used to endorse or promote products derived from this software
     without specific prior written permission.
 
@@ -69,7 +69,8 @@ struct AFCmd{
         Nz = cmd->wrench.torque.z;
         size_J_cmd = cmd->joint_cmds.size();
         J_cmd.resize(size_J_cmd);
-        pos_ctrl = cmd->pos_ctrl;
+        enable_position_controller = cmd->enable_position_controller;
+        position_controller_mask = cmd->position_controller_mask;
         for(size_t idx = 0; idx < size_J_cmd ; idx++){
             J_cmd[idx] = cmd->joint_cmds[idx];
         }
@@ -79,16 +80,16 @@ struct AFCmd{
     double Fx, Fy, Fz;
     double Nx, Ny, Nz;
     std::vector<double> J_cmd;
+    std::vector<uint8_t> position_controller_mask;
     size_t size_J_cmd;
     // By default, always consider force control, unless pos_ctrl is set to true
-    bool pos_ctrl;
+    bool enable_position_controller;
 };
 
 namespace chai_env{
 class Object:public ObjectRosCom{
 public:
-    Object(std::string a_name);
-    Object(std::string a_name, std::string a_namespace);
+    Object(std::string a_name, std::string a_namespace, int a_freq_min, int a_freq_max);
     inline void set_name(std::string name){m_State.name.data = name;}
     void cur_position(double px, double py, double pz);
     void cur_orientation(double roll, double pitch, double yaw);
@@ -105,6 +106,8 @@ public:
     inline void set_userdata_desc(std::string description){m_State.userdata_description = description;}
     void set_userdata(float a_data);
     void set_userdata(std::vector<float> &a_data);
+    void set_children(std::vector<std::string> children_names);
+    void set_joint_positions(std::vector<float> joint_positions);
     AFCmd m_afCmd;
 };
 }
