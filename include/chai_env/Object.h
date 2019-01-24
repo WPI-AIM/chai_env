@@ -46,8 +46,8 @@
 #include <string>
 #include "chai_env/ObjectRosCom.h"
 
-struct AFCmd{
-    AFCmd(){
+struct ObjectCommand{
+    ObjectCommand(){
         Fx = Fy = Fz = 0;
         Nx = Ny = Nz = 0;
         size_J_cmd = 0;
@@ -108,7 +108,7 @@ public:
     void set_userdata(std::vector<float> &a_data);
     void set_children(std::vector<std::string> children_names);
     void set_joint_positions(std::vector<float> joint_positions);
-    AFCmd m_afCmd;
+    ObjectCommand m_objectCommand;
 };
 }
 

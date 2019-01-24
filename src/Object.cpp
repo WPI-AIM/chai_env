@@ -45,7 +45,7 @@
 namespace chai_env{
 
 Object::Object(std::string a_name, std::string a_namespace, int a_freq_min, int a_freq_max): ObjectRosCom(a_name, a_namespace, a_freq_min, a_freq_max){
-  m_afCmd.enable_position_controller = false;
+  m_objectCommand.enable_position_controller = false;
 }
 
 void Object::cur_position(double px, double py, double pz){
@@ -79,7 +79,7 @@ void Object::cur_torque(double nx, double ny, double nz){
 }
 
 void Object::update_af_cmd(){
-    m_afCmd.update(&m_Cmd);
+    m_objectCommand.update(&m_Cmd);
 }
 
 void Object::set_chai_wall_time(double a_sec){
@@ -108,7 +108,9 @@ void Object::set_children(std::vector<std::string> children_names){
 }
 
 void Object::set_joint_positions(std::vector<float> joint_positions){
-    m_State.joint_positions.clear();
+    if (m_State.joint_positions.size() != joint_positions.size()){
+        m_State.joint_positions.resize(joint_positions.size());
+    }
     m_State.joint_positions = joint_positions;
 }
 
