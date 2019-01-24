@@ -46,12 +46,17 @@
 #include <string>
 #include "chai_env/ObjectRosCom.h"
 
+// This struct is almost identical to the data in ObjectCmd ros_msg
+// but is explicitly defined to removed ros_msgs from AFMB and a
+// layer of abstraction in between
 struct ObjectCommand{
     ObjectCommand(){
         Fx = Fy = Fz = 0;
         Nx = Ny = Nz = 0;
         size_J_cmd = 0;
     }
+    // Call this update method to assign all the fields from ros_msg
+    // to this struct
     void update(const chai_msgs::ObjectCmd* cmd){
         px = cmd->pose.position.x;
         py = cmd->pose.position.y;
@@ -103,10 +108,15 @@ public:
     inline void set_principal_intertia(double Ixx, double Iyy, double Izz){m_State.pInertia.x = Ixx; m_State.pInertia.y = Iyy; m_State.pInertia.z = Izz;}
     inline void increment_sim_step(){m_State.sim_step++;}
     inline void set_sim_step(uint step){m_State.sim_step = step;}
+    // This method is to set the description of additional data that could for debugging purposes or future use
     inline void set_userdata_desc(std::string description){m_State.userdata_description = description;}
+    // This method is to set any additional data that could for debugging purposes or future use
     void set_userdata(float a_data);
+    // This method is to set any additional data that could for debugging purposes or future use
     void set_userdata(std::vector<float> &a_data);
-    void set_children(std::vector<std::string> children_names);
+    void set_children_names(std::vector<std::string> children_names);
+    // Get the children defined in the state message
+    inline std::vector<std::string> get_children_names(){return m_State.children_names;}
     void set_joint_positions(std::vector<float> joint_positions);
     ObjectCommand m_objectCommand;
 };

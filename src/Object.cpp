@@ -102,8 +102,8 @@ void Object::set_userdata(std::vector<float> &a_data){
     m_State.userdata = a_data;
 }
 
-void Object::set_children(std::vector<std::string> children_names){
-    m_State.children = children_names;
+void Object::set_children_names(std::vector<std::string> children_names){
+    m_State.children_names = children_names;
 }
 
 void Object::set_joint_positions(std::vector<float> joint_positions){
