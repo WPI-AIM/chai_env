@@ -103,7 +103,6 @@ void Object::set_userdata(std::vector<float> &a_data){
 }
 
 void Object::set_children(std::vector<std::string> children_names){
-    m_State.children.clear();
     m_State.children = children_names;
 }
 
