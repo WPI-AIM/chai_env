@@ -1,7 +1,8 @@
-//===========================================================================
+//==============================================================================
 /*
     Software License Agreement (BSD License)
-    Copyright (c) 2017-2018
+    Copyright (c) 2019, AMBF
+    (www.aimlab.wpi.edu)
 
     All rights reserved.
 
@@ -17,7 +18,7 @@
     disclaimer in the documentation and/or other materials provided
     with the distribution.
 
-    * Neither the name of CHAI3D nor the names of its contributors may
+    * Neither the name of authors nor the names of its contributors may
     be used to endorse or promote products derived from this software
     without specific prior written permission.
 
@@ -32,13 +33,14 @@
     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
     LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
     ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-    POSSIBILITY OF SUCH DAMAGE. 
+    POSSIBILITY OF SUCH DAMAGE.
 
-    \author    amunawar@wpi.edu
+    \author    <http://www.aimlab.wpi.edu>
+    \author    <amunawar@wpi.edu>
     \author    Adnan Munawar
-    \version   0.1
+    \version   $
 */
-//===========================================================================
+//==============================================================================
 
 #include "chai_env/chai_env.h"
 #include <string>

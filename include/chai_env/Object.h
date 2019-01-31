@@ -1,7 +1,8 @@
-//===========================================================================
+//==============================================================================
 /*
     Software License Agreement (BSD License)
-    Copyright (c) 2017-2018
+    Copyright (c) 2019, AMBF
+    (www.aimlab.wpi.edu)
 
     All rights reserved.
 
@@ -34,11 +35,12 @@
     ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
     POSSIBILITY OF SUCH DAMAGE.
 
-    \author    amunawar@wpi.edu
+    \author    <http://www.aimlab.wpi.edu>
+    \author    <amunawar@wpi.edu>
     \author    Adnan Munawar
-    \version   0.1
+    \version   $
 */
-//===========================================================================
+//==============================================================================
 
 #ifndef OBJECT_H
 #define OBJECT_H
@@ -47,7 +49,7 @@
 #include "chai_env/ObjectRosCom.h"
 
 // This struct is almost identical to the data in ObjectCmd ros_msg
-// but is explicitly defined to removed ros_msgs from AFMB and a
+// but is explicitly defined to removed ros_msgs from AMBF and a
 // layer of abstraction in between
 struct ObjectCommand{
     ObjectCommand(){
